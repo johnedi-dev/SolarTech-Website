@@ -147,11 +147,11 @@ export default function Footer() {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 2, type: 'spring' }}
-        whileHover={{ scale: 1.1 }}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-green-500 flex items-center justify-center text-white shadow-2xl shadow-green-500/40"
+        whileHover={{ scale: 1.08 }}
+        className="fixed bottom-4 right-4 z-50 w-12 h-12 sm:bottom-6 sm:right-6 sm:w-14 sm:h-14 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 ring-4 ring-white/70"
         aria-label="Chat on WhatsApp"
       >
-        <FaWhatsapp className="w-7 h-7" />
+        <FaWhatsapp className="w-5 h-5 sm:w-7 sm:h-7" />
       </motion.a>
     </footer>
   );
