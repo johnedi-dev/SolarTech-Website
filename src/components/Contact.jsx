@@ -68,7 +68,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative section-shell bg-slate-50">
+    <section id="contact" className="relative section-shell bg-slate-50 overflow-hidden">
       {/* Background glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-orange-500/5 blur-xl pointer-events-none"></div>
 

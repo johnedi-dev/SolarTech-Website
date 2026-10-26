@@ -15,7 +15,7 @@ export default function Hero() {
           loop
           playsInline
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-[calc(50%_-_20px)_center] lg:object-center"
           aria-hidden="true"
         />
         <div className="hero-overlay absolute inset-0"></div>

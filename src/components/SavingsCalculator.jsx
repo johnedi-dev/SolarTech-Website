@@ -22,7 +22,7 @@ export default function SavingsCalculator() {
   };
 
   return (
-    <section id="calculator" className="relative py-24 bg-slate-50 border-t border-slate-200">
+    <section id="calculator" className="relative py-24 bg-slate-50 border-t border-slate-200 overflow-hidden">
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 mb-3">
