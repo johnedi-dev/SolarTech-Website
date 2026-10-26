@@ -177,7 +177,7 @@ export default function Products() {
   const [activeCategory, setActiveCategory] = useState('inverters');
 
   return (
-    <section id="products" className="relative section-shell bg-slate-50">
+    <section id="products" className="relative section-shell bg-slate-50 overflow-hidden">
       {/* Background orbs */}
       <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-orange-500/5 blur-3xl"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-blue-500/5 blur-3xl"></div>

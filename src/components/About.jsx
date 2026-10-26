@@ -26,7 +26,7 @@ const values = [
 
 export default function About() {
   return (
-    <section id="about" className="relative section-shell section-gradient particles-bg">
+    <section id="about" className="relative section-shell section-gradient particles-bg overflow-hidden">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -73,8 +73,8 @@ export default function About() {
                   <Leaf className="w-5 h-5 text-green-400" />
                 </div>
                 <div>
-                  <p className="text-white font-bold text-sm">500+ Tons</p>
-                  <p className="text-gray-400 text-xs">CO₂ Saved</p>
+                  <p className="text-slate-900 font-bold text-sm">500+ Tons</p>
+                  <p className="text-slate-600 text-xs">CO₂ Saved</p>
                 </div>
               </div>
             </motion.div>

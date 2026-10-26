@@ -69,7 +69,7 @@ export default function Testimonials() {
   const t = testimonials[current];
 
   return (
-    <section id="testimonials" className="relative section-shell section-gradient particles-bg">
+    <section id="testimonials" className="relative section-shell section-gradient particles-bg overflow-hidden">
       {/* Decorative quote marks */}
       <div className="absolute top-10 left-10 text-orange-500/5 text-[200px] font-black leading-none select-none">"</div>
 

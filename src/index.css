@@ -185,6 +185,18 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Belt-and-suspenders against horizontal overflow on mobile: clip at the
+   root as well as the body (older browsers that lack `clip` fall back below). */
+html {
+  overflow-x: clip;
+}
+
+@supports not (overflow-x: clip) {
+  html {
+    overflow-x: hidden;
+  }
+}
+
 body {
   font-family: 'Manrope', sans-serif;
   background-color: var(--solar-surface);

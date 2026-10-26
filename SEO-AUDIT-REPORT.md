@@ -125,6 +125,13 @@ After this audit's fixes, the site has a **complete SEO foundation**: rich meta 
 - Footer Privacy/Terms now real links; dead `#` social links remain only where real profiles don't exist yet (flagged in §4).
 - Calculator page "Back to Home" link fixed (`#hero` → `/#hero`).
 
+### 3.8b Mobile UX & theme polish (post-audit)
+- **Horizontal overflow on mobile fixed** — decorative oversized elements (800/600 px blurred orbs, floating badges) no longer widen the layout: `overflow-hidden` added to every overflowing section (About, Contact, Products, Services, Testimonials, SavingsCalculator, StatsBar) and `html { overflow-x: clip }` with an `overflow-x: hidden` fallback for older mobile browsers. Body-level clip was in place, the root-level rule covers browsers that ignore `clip`.
+- **Hero video framing** — on mobile the video's visible content is nudged 20 px right (`object-position: calc(50% - 20px)`); desktop restored to centered via `lg:object-center`.
+- Full theme swap to the white-and-lime-green palette (`@theme` ramp remap in `src/index.css`) — headings navy `#101A35`, primary lime `#80C91B`, white surfaces; favicon/manifest/theme-color updated to match.
+- Hero overlay reworked from the old 72–92 % white wash to a left-weighted navy scrim fading to clear so the video plays crisply.
+- Legibility follow-up: About floating badge text recolored (was white-on-white after the theme swap).
+
 ### 3.9 Verification performed
 - `npm run build` — clean, no warnings.
 - Route matrix tested on both `vite preview` (production build) and `npm run dev`:

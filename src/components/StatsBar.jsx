@@ -30,7 +30,7 @@ function StatCard({ stat, index }) {
 
 export default function StatsBar() {
   return (
-    <section className="relative section-shell -mt-1">
+    <section className="relative section-shell -mt-1 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-100 to-transparent"></div>
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="section-card rounded-[2rem] p-4 sm:p-6 lg:p-8">

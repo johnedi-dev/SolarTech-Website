@@ -77,7 +77,7 @@ const processSteps = [
 
 export default function Services() {
   return (
-    <section id="services" className="relative section-shell section-gradient">
+    <section id="services" className="relative section-shell section-gradient overflow-hidden">
       {/* Background orbs */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-orange-500/3 blur-3xl"></div>
 
