@@ -6,16 +6,16 @@ const contactInfo = [
   {
     icon: <Phone className="w-5 h-5" />,
     label: 'Phone',
-    value: '+92 300 123 4567',
-    link: 'tel:+923001234567',
+    value: '+92 301 5935 773',
+    link: 'tel:+923015935773',
     color: 'text-orange-400',
     bg: 'bg-orange-500/10',
   },
   {
     icon: <MessageCircle className="w-5 h-5" />,
     label: 'WhatsApp',
-    value: '+92 300 123 4567',
-    link: 'https://wa.me/923001234567',
+    value: '+92 301 5935 773',
+    link: 'https://wa.me/923015935773',
     color: 'text-green-400',
     bg: 'bg-green-500/10',
   },
@@ -31,7 +31,7 @@ const contactInfo = [
     icon: <MapPin className="w-5 h-5" />,
     label: 'Location',
     value: 'Lahore, Pakistan',
-    link: 'https://maps.google.com',
+    link: 'https://www.google.com/maps/search/?api=1&query=SolarTech+Energy+Solutions+Lahore',
     color: 'text-purple-400',
     bg: 'bg-purple-500/10',
   },
@@ -70,7 +70,7 @@ export default function Contact() {
   return (
     <section id="contact" className="relative section-shell bg-slate-50">
       {/* Background glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-orange-500/5 blur-3xl pointer-events-none"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-orange-500/5 blur-xl pointer-events-none"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -125,7 +125,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">{info.label}</p>
-                      <p className="text-white font-semibold mt-0.5">{info.value}</p>
+                      <p className="text-gray-500 font-semibold mt-0.5">{info.value}</p>
                     </div>
                   </a>
                 ) : (
@@ -144,7 +144,7 @@ export default function Contact() {
 
             {/* WhatsApp CTA */}
             <motion.a
-              href="https://wa.me/923001234567?text=Hi! I'm interested in solar installation."
+              href="https://wa.me/923015935773?text=Hi! I'm interested in solar installation."
               target="_blank"
               rel="noreferrer"
               whileHover={{ scale: 1.02 }}

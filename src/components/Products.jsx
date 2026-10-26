@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FaBatteryThreeQuarters, FaSolarPanel, FaBolt, FaMicrochip } from 'react-icons/fa';
-import { Zap, ChevronRight, Star } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 const categories = [
   { id: 'inverters', label: 'Inverters', icon: <FaBolt /> },
@@ -123,7 +123,7 @@ function ProductCard({ product, index }) {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className={`product-card rounded-[1.6rem] p-6 h-full bg-gradient-to-br ${product.color || product.color} ${product.borderColor || product.border} flex flex-col`}
+      className={`product-card rounded-[1.6rem] p-6 h-full bg-gradient-to-br ${product.color} ${product.borderColor} flex flex-col`}
     >
       {/* Tag */}
       {(product.tag) && (
@@ -162,9 +162,13 @@ function ProductCard({ product, index }) {
         <p className="text-slate-600 text-sm mb-5 leading-relaxed">{product.desc}</p>
       )}
 
-      <button className="mt-auto w-full py-2.5 rounded-xl border border-slate-200 hover:border-orange-500/50 text-sm text-slate-700 hover:text-orange-500 transition-all duration-300 flex items-center justify-center gap-2 font-medium">
-        View Details <ChevronRight className="w-4 h-4" />
-      </button>
+      {/* Working CTA — takes visitors to the quote form (also tracks intent) */}
+      <a
+        href="#contact"
+        className="mt-auto w-full py-2.5 rounded-xl border border-slate-200 hover:border-orange-500/50 text-sm text-slate-700 hover:text-orange-500 transition-all duration-300 flex items-center justify-center gap-2 font-medium"
+      >
+        Get Price / Enquire <ChevronRight className="w-4 h-4" />
+      </a>
     </motion.div>
   );
 }
@@ -218,21 +222,22 @@ export default function Products() {
           ))}
         </div>
 
-        {/* Products Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"
-          >
-            {(products[activeCategory] || []).map((product, i) => (
-              <ProductCard key={i} product={product} index={i} />
-            ))}
-          </motion.div>
-        </AnimatePresence>
+        {/* Products Grid — ALL categories stay in the DOM (hidden when inactive)
+            so search engines can crawl the full product catalog. */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" aria-live="polite">
+          {Object.entries(products).map(([categoryId, productList]) => (
+            <div
+              key={categoryId}
+              className={`grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch col-span-full ${
+                activeCategory === categoryId ? '' : 'hidden'
+              }`}
+            >
+              {productList.map((product, i) => (
+                <ProductCard key={`${categoryId}-${product.name || i}`} product={product} index={i} />
+              ))}
+            </div>
+          ))}
+        </div>
 
         {/* CTA */}
         <motion.div

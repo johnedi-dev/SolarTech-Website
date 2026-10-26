@@ -2,20 +2,177 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SolarTech Energy Solutions — Premium Solar in Pakistan</title>
-    <meta name="description" content="Pakistan's premier solar energy provider. Premium solar inverters from Solax, GoodWe, Solis. Batteries from Dyness & Soluna. Canadian Solar, Longi, Jinko panels. Expert installation & 10yr warranty." />
-    <meta name="keywords" content="solar panels Pakistan, solar inverter, GoodWe, Solax Power, Dyness battery, Canadian Solar, Longi, Jinko, Solis, net metering" />
-    <meta property="og:title" content="SolarTech Energy Solutions" />
-    <meta property="og:description" content="Premium solar systems with world-class brands. Save up to 80% on electricity bills." />
+
+    <!-- ==================================================================
+         SEO HEAD — SolarTech Energy Solutions
+         NOTE: Replace https://www.solartech.pk with the real production
+         domain in canonical / og:url / og:image / JSON-LD before launch,
+         and replace placeholder address & coordinates with the real NAP.
+         ================================================================== -->
+
+    <title>Solar Panels, Inverters & Net Metering in Pakistan | SolarTech Energy Solutions</title>
+    <meta name="description" content="SolarTech installs premium solar systems across Pakistan — Solax, GoodWe & Solis inverters, Canadian Solar, Longi & Jinko panels, Dyness & Soluna batteries, complete net metering and a 10-year warranty. Get a free quote from Lahore's trusted solar company." />
+
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://www.solartech.pk/" />
+
+    <!-- Open Graph (Facebook / WhatsApp / LinkedIn) -->
+    <meta property="og:site_name" content="SolarTech Energy Solutions" />
+    <meta property="og:title" content="Premium Solar Systems in Pakistan — Panels, Inverters & Net Metering | SolarTech" />
+    <meta property="og:description" content="Save up to 80% on your electricity bill with premium solar from GoodWe, Solax, Canadian Solar, Longi & Jinko. Expert installation, net metering and a 10-year warranty." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.solartech.pk/" />
+    <meta property="og:image" content="https://www.solartech.pk/og-cover.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_PK" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Premium Solar Systems in Pakistan | SolarTech Energy Solutions" />
+    <meta name="twitter:description" content="Panels, inverters & batteries from world-class brands. Net metering, expert installation, 10-year warranty." />
+    <meta name="twitter:image" content="https://www.solartech.pk/og-cover.jpg" />
+
+    <!-- Local targeting (Pakistan / Lahore) -->
+    <meta name="geo.region" content="PK" />
+    <meta name="geo.placename" content="Lahore" />
+    <meta name="theme-color" content="#80C91B" />
+
+    <!-- Icons & PWA -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Fonts: Manrope (body) + Plus Jakarta Sans (headings) — matches src/index.css.
+         Weights trimmed to those actually used. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Performance: LCP hero image + fonts priority -->
+    <link rel="preload" as="image" href="/hero-bg.webp" fetchpriority="high" />
+
+    <!-- Structured data: LocalBusiness + WebSite + Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": ["Organization", "WebSite"],
+          "@id": "https://www.solartech.pk/#organization",
+          "name": "SolarTech Energy Solutions",
+          "url": "https://www.solartech.pk/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://www.solartech.pk/favicon-512.png"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+92-301-5935773",
+            "email": "info@solartech.pk",
+            "contactType": "sales",
+            "areaServed": "PK",
+            "availableLanguage": ["English", "Urdu"]
+          },
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "REPLACE-WITH-ADDRESS",
+            "addressLocality": "Lahore",
+            "addressRegion": "Punjab",
+            "postalCode": "54000",
+            "addressCountry": "PK"
+          }
+        },
+        {
+          "@type": ["LocalBusiness", "HomeAndConstructionBusiness"],
+          "@id": "https://www.solartech.pk/#localbusiness",
+          "name": "SolarTech Energy Solutions",
+          "url": "https://www.solartech.pk/",
+          "image": "https://www.solartech.pk/og-cover.jpg",
+          "telephone": "+92-301-5935773",
+          "email": "info@solartech.pk",
+          "priceRange": "PKR",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "REPLACE-WITH-ADDRESS",
+            "addressLocality": "Lahore",
+            "addressRegion": "Punjab",
+            "postalCode": "54000",
+            "addressCountry": "PK"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 31.5204,
+            "longitude": 74.3587
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+              "opens": "09:00",
+              "closes": "19:00"
+            }
+          ],
+          "areaServed": ["Lahore", "Karachi", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Peshawar", "Pakistan"],
+          "knowsAbout": ["Solar Panels", "Solar Inverters", "Solar Batteries", "Net Metering", "Solar Energy"],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Solar Products & Services",
+            "itemListElement": [
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Residential Solar Installation" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Commercial & Industrial Solar" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Net Metering Setup" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Solar Inverters (Solax, Solis, GoodWe)" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Solar Batteries (Dyness, Soluna)" } },
+              { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Solar Panels (Canadian, Longi, Jinko)" } }
+            ]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.solartech.pk/#website",
+          "url": "https://www.solartech.pk/",
+          "name": "SolarTech Energy Solutions",
+          "inLanguage": "en",
+          "publisher": { "@id": "https://www.solartech.pk/#organization" }
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- SEO fallback for crawlers that don't execute JavaScript (bing, DuckDuckGo, AI bots).
+         Kept intentionally distinct from the JS-rendered copy to avoid duplicate text. -->
+    <noscript>
+      <div style="max-width: 720px; margin: 0 auto; padding: 2rem; font-family: system-ui, sans-serif;">
+        <h1>SolarTech Energy Solutions — Solar Panels, Inverters & Installation in Pakistan</h1>
+        <p>
+          SolarTech is Pakistan's trusted solar energy company, headquartered in Lahore and serving the whole
+          country. We are an authorized distributor and installer of world-class solar equipment.
+        </p>
+        <ul>
+          <li><strong>Solar Inverters:</strong> Solax Power, Solis, GoodWe hybrid and on-grid models (4–12 kW)</li>
+          <li><strong>Solar Panels:</strong> Canadian Solar, Longi (Hi-MO 6), Jinko (Tiger Neo) N-type modules up to 530 W</li>
+          <li><strong>Solar Batteries:</strong> Dyness Tower LiFePO4, Soluna Lyra stackable storage (5–16 kWh)</li>
+          <li><strong>Services:</strong> residential solar, commercial & industrial solar, net metering with WAPDA/DISCO, energy audits, annual maintenance and 24/7 support</li>
+        </ul>
+        <p>
+          Every system is covered by a 10-year comprehensive warranty and backed by certified engineers
+          with 500+ completed installations.
+        </p>
+        <p>
+          <strong>Contact:</strong> Phone/WhatsApp +92 301 5935 773 &middot;
+          Email <a href="mailto:info@solartech.pk">info@solartech.pk</a> &middot;
+          Lahore, Pakistan &middot; Mon–Sat 9am–7pm.
+        </p>
+        <p>Free solar tools and info: <a href="solar-calculator/">Solar Load Calculator</a></p>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
