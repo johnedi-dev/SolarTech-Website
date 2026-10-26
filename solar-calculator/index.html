@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ==================================================================
+         SEO HEAD — Solar Load Calculator page (/solar-calculator)
+         NOTE: Replace https://www.solartech.pk with the real production
+         domain in canonical / og:url / og:image before launch.
+         ================================================================== -->
+
+    <title>Free Solar Load Calculator Pakistan — Size Panels, Inverter & Battery | SolarTech</title>
+    <meta name="description" content="Free solar calculator for Pakistan. List your home appliances or bill units and instantly get the right system size — how many solar panels, which kW inverter and how many kWh of batteries your home needs." />
+
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <link rel="canonical" href="https://www.solartech.pk/solar-calculator/" />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content="SolarTech Energy Solutions" />
+    <meta property="og:title" content="Free Solar Load Calculator — Right-Size Your Solar System (Pakistan)" />
+    <meta property="og:description" content="List your appliances or bill units and get instant, item-wise estimates for solar panels, inverter kW and battery kWh — free solar sizing tool for Pakistani homes." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.solartech.pk/solar-calculator/" />
+    <meta property="og:image" content="https://www.solartech.pk/og-cover.jpg" />
+    <meta property="og:locale" content="en_PK" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Free Solar Load Calculator Pakistan | SolarTech" />
+    <meta name="twitter:description" content="Instantly estimate the panels, inverter and batteries your home needs. Free tool by SolarTech Energy Solutions." />
+    <meta name="twitter:image" content="https://www.solartech.pk/og-cover.jpg" />
+
+    <meta name="geo.region" content="PK" />
+    <meta name="theme-color" content="#80C91B" />
+
+    <!-- Icons & PWA -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Fonts: Manrope (body) + Plus Jakarta Sans (headings) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Structured data: WebApplication + Breadcrumbs -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "SolarTech Solar Load Calculator",
+          "url": "https://www.solartech.pk/solar-calculator/",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Any",
+          "browserRequirements": "Requires JavaScript",
+          "inLanguage": "en",
+          "description": "Free online solar calculator for Pakistan: enter appliances or monthly bill units and instantly estimate required solar panels (kW), inverter size and battery storage (kWh).",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "PKR" },
+          "publisher": { "@id": "https://www.solartech.pk/#organization" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.solartech.pk/" },
+            { "@type": "ListItem", "position": 2, "name": "Solar Load Calculator", "item": "https://www.solartech.pk/solar-calculator/" }
+          ]
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- SEO fallback for crawlers without JavaScript -->
+    <noscript>
+      <div style="max-width: 720px; margin: 0 auto; padding: 2rem; font-family: system-ui, sans-serif;">
+        <h1>Solar Load Calculator — Free Solar System Sizing for Pakistan</h1>
+        <p>
+          This free tool estimates what your home needs: total daily energy in kWh (units),
+          the recommended solar panel system size in kW, inverter capacity, and battery
+          storage for backup. Choose the appliance method (list each device, quantity and
+          usage hours) or the bill method (enter your highest and lowest monthly units from
+          WAPDA/LESCO/GEPCO bills). The calculator covers inverter surge sizing, battery
+          autonomy, panel performance losses and net metering quota.
+        </p>
+        <p>Enable JavaScript to use the interactive calculator, or contact SolarTech for a free manual survey:
+        Phone/WhatsApp +92 301 5935 773 &middot; Lahore, Pakistan. <a href="/">SolarTech homepage</a></p>
+      </div>
+    </noscript>
+
+    <script type="module" src="/src/calculator-main.jsx"></script>
+  </body>
+</html>

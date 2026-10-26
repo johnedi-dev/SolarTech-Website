@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Sun, Phone, Mail, MapPin, MessageCircle, ArrowUp } from 'lucide-react';
+import { Sun, Phone, Mail, MapPin, ArrowUp } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaYoutube } from 'react-icons/fa';
 
 const footerLinks = {
@@ -29,12 +29,15 @@ const footerLinks = {
 const socialLinks = [
   { icon: <FaFacebook className="w-5 h-5" />, href: '#', label: 'Facebook', color: 'hover:text-blue-400' },
   { icon: <FaInstagram className="w-5 h-5" />, href: '#', label: 'Instagram', color: 'hover:text-pink-400' },
-  { icon: <FaWhatsapp className="w-5 h-5" />, href: 'https://wa.me/923001234567', label: 'WhatsApp', color: 'hover:text-green-400' },
+  { icon: <FaWhatsapp className="w-5 h-5" />, href: 'https://wa.me/923015935773', label: 'WhatsApp', color: 'hover:text-green-400' },
   { icon: <FaYoutube className="w-5 h-5" />, href: '#', label: 'YouTube', color: 'hover:text-red-400' },
 ];
 
-export default function Footer() {
+export default function Footer({ offHome = false }) {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  // On /solar-calculator/ the footer's section links must climb back to the home page
+  const sectionHref = (to) => (offHome ? `../#${to}` : `#${to}`);
+  const pageHref = (file) => (offHome ? `../${file}` : file);
 
   return (
     <footer className="relative bg-slate-50 border-t border-slate-200">
@@ -52,7 +55,7 @@ export default function Footer() {
                 <Sun className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-black gradient-text">SolarTech</h2>
+                <div className="text-xl font-black gradient-text">SolarTech</div>
                 <p className="text-[10px] text-gray-500 tracking-widest uppercase">Energy Solutions</p>
               </div>
             </div>
@@ -64,7 +67,7 @@ export default function Footer() {
             {/* Contact Details */}
             <div className="space-y-3 mb-6">
               {[
-                { icon: <Phone className="w-4 h-4" />, text: '+92 300 123 4567', href: 'tel:+923001234567' },
+                { icon: <Phone className="w-4 h-4" />, text: '+92 301 5935 773', href: 'tel:+923015935773' },
                 { icon: <Mail className="w-4 h-4" />, text: 'info@solartech.pk', href: 'mailto:info@solartech.pk' },
                 { icon: <MapPin className="w-4 h-4" />, text: 'Lahore, Pakistan', href: null },
               ].map((item, i) => (
@@ -107,7 +110,7 @@ export default function Footer() {
                 {links.map((link, i) => (
                   <li key={i}>
                     <a
-                      href={`#${link.to}`}
+                      href={sectionHref(link.to)}
                       className="text-slate-600 hover:text-orange-500 text-sm cursor-pointer transition-colors duration-200 flex items-center gap-1 group"
                     >
                       <span className="w-0 group-hover:w-3 h-0.5 bg-orange-500 transition-all duration-200 inline-block"></span>
@@ -126,8 +129,8 @@ export default function Footer() {
             © {new Date().getFullYear()} SolarTech Energy Solutions. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <span className="text-gray-600 text-xs">Privacy Policy</span>
-            <span className="text-gray-600 text-xs">Terms of Service</span>
+            <a href={pageHref('privacy.html')} className="text-gray-600 text-xs hover:text-orange-500 transition-colors">Privacy Policy</a>
+            <a href={pageHref('terms.html')} className="text-gray-600 text-xs hover:text-orange-500 transition-colors">Terms of Service</a>
             <button
               onClick={scrollToTop}
               className="w-9 h-9 rounded-full bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-orange-400 hover:bg-orange-500/20 transition-all"
@@ -141,7 +144,7 @@ export default function Footer() {
 
       {/* WhatsApp floating button */}
       <motion.a
-        href="https://wa.me/923001234567?text=Hi! I'm interested in solar installation."
+        href="https://wa.me/923015935773?text=Hi! I'm interested in solar installation."
         target="_blank"
         rel="noreferrer"
         initial={{ scale: 0 }}

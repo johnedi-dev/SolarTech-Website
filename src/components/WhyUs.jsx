@@ -69,8 +69,8 @@ export default function WhyUs() {
     <section id="why-us" className="relative section-shell bg-slate-50">
       {/* Decorative grid */}
       <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: `linear-gradient(rgba(255,107,0,1) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(255,107,0,1) 1px, transparent 1px)`,
+        backgroundImage: `linear-gradient(rgba(128,201,27,1) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(128,201,27,1) 1px, transparent 1px)`,
         backgroundSize: '60px 60px',
       }}></div>
 
@@ -128,11 +128,11 @@ export default function WhyUs() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.1 }}
-          className="mt-16 rounded-[2rem] overflow-hidden relative border border-orange-500/20 shadow-[0_30px_70px_rgba(255,107,0,0.18)]"
+          className="mt-16 rounded-[2rem] overflow-hidden relative border border-orange-500/20 shadow-[0_30px_70px_rgba(128,201,27,0.18)]"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-orange-600/80 to-amber-500/60"></div>
           <div className="absolute inset-0 opacity-10" style={{
-            backgroundImage: 'url(/panels-aerial.jpg)',
+            backgroundImage: 'url(/panels-aerial.webp)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}></div>
@@ -143,14 +143,14 @@ export default function WhyUs() {
             </div>
             <div className="flex flex-wrap gap-4">
               <motion.a
-                href="tel:+923001234567"
+                href="tel:+923015935773"
                 whileHover={{ scale: 1.05 }}
                 className="px-8 py-4 rounded-xl bg-white text-orange-600 font-bold hover:shadow-xl transition-all duration-300"
               >
                 Call Us Now
               </motion.a>
               <motion.a
-                href="https://wa.me/923001234567"
+                href="https://wa.me/923015935773"
                 target="_blank"
                 rel="noreferrer"
                 whileHover={{ scale: 1.05 }}

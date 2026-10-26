@@ -1,0 +1,14 @@
+# robots.txt — SolarTech Energy Solutions
+# User-agent rules: everyone gets full access; nothing sensitive is hosted here.
+
+User-agent: *
+Allow: /
+
+# AI answer engines (explicitly welcome; harmless if some ignore this)
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://www.solartech.pk/sitemap.xml

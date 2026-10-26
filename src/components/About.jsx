@@ -41,9 +41,13 @@ export default function About() {
           >
             <div className="relative rounded-[2rem] overflow-hidden border border-slate-200 shadow-[0_30px_80px_rgba(0,0,0,0.08)] p-2 sm:p-3">
               <img
-                src="/team.jpg"
-                alt="Solar installation team"
+                src="/team.webp"
+                alt="SolarTech installation team reviewing solar panels on a rooftop project"
                 className="w-full h-[500px] object-cover rounded-[1.5rem]"
+                width="1200"
+                height="1600"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/20 to-transparent"></div>
             </div>

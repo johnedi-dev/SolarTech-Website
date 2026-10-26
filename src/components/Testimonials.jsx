@@ -16,7 +16,7 @@ const testimonials = [
   },
   {
     name: 'Fatima Malik',
-    location: 'Karachi, Pakistan',
+    location: 'Lahore, Pakistan',
     role: 'Business Owner',
     rating: 5,
     text: 'We got a 20kW Canadian Solar + Solis inverter system for our office. The energy audit was thorough and the projections were accurate. We achieved full ROI in under 3 years. SolarTech support is exceptional!',
@@ -27,7 +27,7 @@ const testimonials = [
   },
   {
     name: 'Usman Tariq',
-    location: 'Islamabad, Pakistan',
+    location: 'Faisalabad, Pakistan',
     role: 'Factory Owner',
     rating: 5,
     text: 'Installed a 50kW industrial solar system. GoodWe inverters and Jinko panels were of premium quality. The net metering setup was handled completely by SolarTech — zero hassle. Very happy with the investment.',
@@ -37,8 +37,8 @@ const testimonials = [
     avatarBg: 'bg-green-500',
   },
   {
-    name: 'Sana Khalid',
-    location: 'Faisalabad, Pakistan',
+    name: 'Usman Khalid',
+    location: 'Lahore, Pakistan',
     role: 'Residential Customer',
     rating: 5,
     text: 'From the initial consultation to the final installation, the entire experience was flawless. The Longi panels and Solax inverter are working perfectly. The monitoring app is very user-friendly!',
@@ -49,7 +49,7 @@ const testimonials = [
   },
   {
     name: 'Dr. Imran Hassan',
-    location: 'Rawalpindi, Pakistan',
+    location: 'Lahore, Pakistan',
     role: 'Hospital Administrator',
     rating: 5,
     text: 'We have solar systems installed at 3 of our hospital buildings. SolarTech managed all three projects simultaneously with exceptional coordination. The Dyness battery backup ensures no interruption during load shedding.',

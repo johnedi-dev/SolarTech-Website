@@ -5,14 +5,20 @@ import { FaSolarPanel, FaBolt } from 'react-icons/fa';
 export default function Hero() {
   return (
     <section id="hero" className="relative min-h-screen flex overflow-hidden">
-      {/* Background Image */}
+      {/* Background Video */}
       <div className="absolute inset-0">
-        <img
-          src="/hero-bg.jpg"
-          alt="Solar panels on rooftop"
-          className="w-full h-full object-cover object-center"
+        <video
+          src="/Solar_energy_system_animation.mp4"
+          poster="/hero-bg.webp"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          aria-hidden="true"
         />
-        <div className="hero-overlay absolute inset-0 bg-slate-950/35"></div>
+        <div className="hero-overlay absolute inset-0"></div>
         {/* Additional dark gradient at bottom */}
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950/60 to-transparent"></div>
       </div>
@@ -31,8 +37,8 @@ export default function Hero() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-7xl px-4 sm:px-6 lg:px-12 pt-28 pb-20 sm:pt-32 lg:pt-36">
-        <div className="w-full max-w-3xl text-left p-8 sm:p-10 lg:p-12 bg-transparent shadow-none">
+      <div className="relative z-10 w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-20 sm:pt-32 lg:pt-36">
+        <div className="w-full max-w-3xl text-left p-4 sm:p-6 lg:p-6 bg-transparent shadow-none">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -49,7 +55,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight text-slate-800 drop-shadow-[0_4px_20px_rgba(0,0,0,0.35)]"
+            className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.45)]"
           >
             Power Your Future{' '}
             <span className="block gradient-text">
@@ -62,9 +68,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-lg sm:text-xl text-slate-500 mb-8 max-w-xl leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.25)]"
+            className="text-base sm:text-lg text-slate-100 mb-8 max-w-xl leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)]"
           >
-            Premium solar solutions with top brands and services excelence, and more. 
+            Premium solar solutions with world-class brands and expert service.
             Cut your electricity bills by <span className="text-orange-400 font-bold">up to 80%</span> with our expert installations.
           </motion.p>
 
@@ -89,7 +95,7 @@ export default function Hero() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-xl font-bold text-slate-600 text-lg glass border border-white/20 hover:border-orange-500/50 transition-all duration-300 flex items-center gap-2"
+                className="px-8 py-4 rounded-xl font-bold text-white text-lg glass border border-white/20 hover:border-orange-500/50 transition-all duration-300 flex items-center gap-2"
               >
                 <FaSolarPanel className="w-5 h-5" />
                 Our Products
@@ -109,7 +115,7 @@ export default function Hero() {
               { icon: <Award className="w-5 h-5" />, text: 'Certified Installer' },
               { icon: <FaBolt className="w-5 h-5" />, text: '500+ Installations' },
             ].map((badge, i) => (
-              <div key={i} className="flex items-center gap-2 text-sm text-slate-500/80">
+              <div key={i} className="flex items-center gap-2 text-sm text-slate-200">
                 <div className="text-orange-400">{badge.icon}</div>
                 <span>{badge.text}</span>
               </div>
@@ -125,7 +131,7 @@ export default function Hero() {
         transition={{ delay: 1.2 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span className="text-xs text-slate-500 font-medium tracking-widest uppercase">Scroll</span>
+        <span className="text-xs text-slate-300 font-medium tracking-widest uppercase">Scroll</span>
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
