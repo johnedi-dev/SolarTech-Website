@@ -212,7 +212,70 @@ One page per product and per service (a single-page site can never rank for "sol
 
 ---
 
-## 6. File Change Summary
+## 6. City & Service SEO Upgrade — Lahore & Faisalabad (Oct 28, 2026)
+
+Following the Phase-2 roadmap (§5.2), two **dedicated, fully indexable city landing pages** were added — the audit's own conclusion was that a single-page site cannot rank for "solar installation Lahore/Faisalabad"-class queries against competitors with dedicated local pages:
+
+### 6.1 What was added
+| Asset | Purpose |
+|---|---|
+| `solar-lahore/index.html` + `src/LahoreApp.jsx` + `src/lahore-main.jsx` | `/solar-lahore/` — city page with its own title, meta, canonical, OG tags |
+| `solar-faisalabad/index.html` + `src/FaisalabadApp.jsx` + `src/faisalabad-main.jsx` | `/solar-faisalabad/` — same pattern, FESCO-specific |
+| `src/components/CityLanding.jsx` | Shared landing component (per-city data: DISCO, coverage areas, FAQs, industrial estates) — both pages render it, ~5.6 KB gzip shared chunk |
+
+**Content depth per page (this is what makes them rank):**
+- **H1:** `Solar Panel Installation in Lahore` / `…in Faisalabad` — exact-match commercial intent.
+- **Services section (6 cards):** residential rooftop, commercial & industrial, `{DISCO} net metering`, hybrid battery backup, survey/design/audit, AMC — each card names the city/DISCO in rendered HTML.
+- **Price table (2026):** 5 kW / 10 kW / 25 kW+ systems with **PKR ranges, panel counts, inverter kW, roof area** — targets the "solar system price in Lahore/Faisalabad" query cluster, which is the highest-intent, highest-volume money query in the Pakistani solar niche.
+- **Net metering section:** step-by-step procedure per city's DISCO (**LESCO in Lahore, FESCO in Faisalabad**) — matches "LESCO net metering procedure" class informational queries and signals real local expertise to Google.
+- **Coverage/area lists:** DHA, Gulberg, Bahria Town, Johar Town… (Lahore); Madina Town, Canal Road, FIED Industrial Estate… (Faisalabad) — locality term coverage mirrors how local searchers actually type.
+- **Visible FAQ (6 Q&As per city)** + matching FAQPage JSON-LD (rich-result eligible), *disciplined question wording per city* (5 kW price, net metering timeline, panel brand fit, DHA/society NOC for Lahore; textile-industry suitability for Faisalabad).
+- **Rich `<noscript>` fallback** with services, prices, area lists AND internal links to home, calculator and the sibling city page — Bing/DuckDuckGo/AI crawlers get full content without JS.
+- **Schema per page:** `Service` (with inline `LocalBusiness` provider NAP + `areaServed` City/AdministrativeArea + `hasOfferCatalog` of products) + `FAQPage` + `BreadcrumbList`. All validated via `scripts/validate-jsonld.mjs` (now covers 4 pages) — **VALID**.
+
+### 6.2 Indexation wiring (so the new pages actually get found)
+- **Cross-linking (crawl paths):** Footer "Popular Pages" row (present on ALL pages → calculator & city pages receive links from every document), home `<noscript>` links, city-page breadcrumbs + hero CTAs linking back to `/solar-calculator/` and home, and city pages link to each other.
+- `public/sitemap.xml`: +2 URLs (priority 0.9 — commercial pages sit below home 1.0, above legal pages 0.2); `lastmod` 2026-10-28.
+- `public/_redirects` + `public/.htaccess` + dev `prettyUrls()`: bare `/solar-lahore` → 301 to `/solar-lahore/` (canonical slash form everywhere — no duplicate URLs).
+- `vite.config.js`: two new MPA inputs; checked the production build — `/solar-lahore/` & `/solar-faisalabad/` serve 200, bare path serves 301, JSON-LD parses on all 4 pages.
+- Home head: meta description now names **Lahore + Faisalabad explicitly** ("Lahore, Faisalabad & across Pakistan", "LESCO & FESCO net metering, Punjab's trusted solar company") — the description is a ranking input *indirectly* (CTR) and a snippet stage directly.
+
+### 6.3 Why the earlier (§3) work makes these pages land in rankings
+The October 26 overhaul built the *technical foundation* these new pages stand on:
+1. **Trailing-slash MPA pattern** (built for the calculator) is now reused — each city page is a genuine crawlable URL with a unique `<title>`, something the original hash-SPA could never produce for any page.
+2. **NAP consistency** (one phone everywhere + Google-verifiable identity in JSON-LD) means the two new `Service` entities inherit an *already-consistent* branded entity — the #1 prerequisite for local ranking relevance in Lahore/Faisalabad.
+3. **Geo signals** (`geo.region`, `geo.placename` — now per-city on the city pages), `og:locale=en_PK`, city coordinates in the provider address.
+4. **Speed:** 613 KB total images + code-split JS keeps LCP healthy on 4G, and Core Web Vitals rank for *every* page including these new ones.
+5. **noscript fallbacks** (a pattern the audit introduced) mean the majority non-Google crawlers index the city pages' content too.
+6. **robots.txt + GSC-submitted sitemap** means the new URLs enter discovery immediately upon deploy; no need to wait for organic crawling.
+
+### 6.4 Ranking checks — how to verify (and measure) all of this
+**Google Search Console (the only authoritative rank source):** after deploy, verify domain (DNS TXT), submit sitemap.xml, then:
+- *URL Inspection* on `/`, `/solar-calculator/`, `/solar-lahore/`, `/solar-faisalabad/` → "Request Indexing" for each.
+- **Performance → Search results:** filter by *Query* and *Page*. Within 2–6 weeks look for impressions on the money clusters: `solar installation lahore`, `solar panels lahore`, `solar system price faisalabad`, `lesco net metering`, `solar calculator pakistan`, `fesco solar`. Impressions rising before clicks is the normal sequence — treat impressions as your ranking-orbit indicator, clicks as intent capture.
+- **Sitemaps report:** submitted sitemap should show 6 URLs discovered / indexed (Pages report → "Why pages aren't indexed" if not).
+- **Rich Results Test / GSC Enhancements:** confirm FAQ rich results are eligible on both city pages.
+- KPI targets (§5 KPI table still apply): `/solar-lahore` top-10 within 90 days for "solar installation lahore" class queries — realistically the local-pack via **Google Business Profile** is the faster first win; city pages are the faster *organic* win.
+
+**Spot checks (real SERPs, no tools needed):**
+- `site:yourdomain.pk` → should list all indexable URLs within weeks.
+- `site:yourdomain.pk solar faisalabad` → the city page surfaces.
+- `intitle:"solar installation lahore"` — see WHO outranks you; note the SERP floor (Google Local data, SolarMax, Reon are strong). Target position moves, not "must be #1."
+- Search `solar system price in faisalabad 2026` from an IP/locality sample (or use a rank tracker e.g. SERPMobile/SE Ranking with PKL location) and log positions weekly — rank trackers bracket GSC's percentile data with exact positions.
+- AI answers (ChatGPT/Perplexity/Ask) — ask "best solar companies in Faisalabad?" monthly; the noscript routes + Product schema make the site *eligible* to be cited.
+
+**Local-pack (largest share of "solar lahore" clicks):** create both Google Business Profiles (category Solar energy installer, service-area Lahore / Faisalabad), embed the map in the Contact section, collect reviews there — GBP-in-local-pack is tracked in GSC Business Profile reports, not in standard Search reporting.
+
+
+## 7. File Change Summary (City/Service Upgrade addendum)
+
+**Created:** `vercel.json` (Vercel-host config: global `trailingSlash: true` 308s for canonical URLs, `/assets/*` immutable caching, `nosniff` headers, `/privacy`+`/terms` 301s) · `solar-lahore/index.html` · `solar-faisalabad/index.html` · `src/CityLanding.jsx` · `src/{LahoreApp,FaisalabadApp}.jsx` · `src/{lahore,faisalabad}-main.jsx`
+
+**Modified:** `vite.config.js` (+2 MPA inputs, +2 bare-path 301s) · `public/sitemap.xml` (+2 URLs) · `public/_redirects` (+2 rules) · `public/.htaccess` (+2 rules) · `src/components/Footer.jsx` ("Popular Pages" internal-link row) · `index.html` (description names Lahore + Faisalabad + LESCO/FESCO; noscript links city pages) · `scripts/validate-jsonld.mjs` (now validates all 4 pages)
+
+---
+
+## 8. File Change Summary — Original October 26 Audit
 
 **Created:** `solar-calculator/index.html` · `src/CalculatorApp.jsx` · `src/calculator-main.jsx` · `public/robots.txt` · `public/sitemap.xml` · `public/privacy.html` · `public/terms.html` · `public/_redirects` · `public/.htaccess` · `public/site.webmanifest` · `public/favicon-{180,192,512}.png` · `public/og-cover.jpg` · `public/{hero-bg,team,panels-aerial,inverter}.webp` · `scripts/optimize-images.mjs` · `scripts/generate-icons.mjs` · `scripts/validate-jsonld.mjs` · `assets-src/*` (source images) · `SEO-AUDIT-REPORT.md`
 

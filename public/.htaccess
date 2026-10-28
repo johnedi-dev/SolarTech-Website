@@ -4,8 +4,10 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Canonical form: /solar-calculator  ->  /solar-calculator/
+  # Canonical form: bare paths -> trailing-slash forms
   RewriteRule ^solar-calculator/?$ /solar-calculator/ [R=301,L]
+  RewriteRule ^solar-lahore/?$ /solar-lahore/ [R=301,L]
+  RewriteRule ^solar-faisalabad/?$ /solar-faisalabad/ [R=301,L]
 
   # Never serve index.html directly
   RewriteRule ^index\.html$ / [R=301,L]

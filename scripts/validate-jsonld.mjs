@@ -1,6 +1,11 @@
 import { readFileSync } from 'node:fs';
 
-for (const f of ['dist/index.html', 'dist/solar-calculator/index.html']) {
+for (const f of [
+  'dist/index.html',
+  'dist/solar-calculator/index.html',
+  'dist/solar-lahore/index.html',
+  'dist/solar-faisalabad/index.html',
+]) {
   const html = readFileSync(f, 'utf8');
   const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
   if (blocks.length === 0) console.log(`${f}: NO JSON-LD FOUND`);

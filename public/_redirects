@@ -1,7 +1,9 @@
 # Netlify / Cloudflare Pages redirects
-# Normalize the calculator URL to its canonical (trailing-slash) form
+# Normalize page URLs to their canonical (trailing-slash) forms
 /solar-calculator    /solar-calculator/    301
 /#/solar-calculator  /solar-calculator/    301
+/solar-lahore        /solar-lahore/        301
+/solar-faisalabad    /solar-faisalabad/    301
 
 # Force one version of the home page
 /index.html    /    301
