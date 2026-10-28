@@ -58,8 +58,7 @@ export default function Footer({ offHome = false }) {
             ))}
           </nav>
 
-          {/* Socials */}
-          <div className="flex gap-2.5">
+          {/* Socials */}          <div className="flex gap-2.5">
             {socialLinks.map((s, i) => (
               <a
                 key={i}
@@ -73,6 +72,27 @@ export default function Footer({ offHome = false }) {
               </a>
             ))}
           </div>
+        </div>
+
+        {/* Popular pages — internal linking to indexable city/tool pages */}
+        <div className="border-t border-white/10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-[11px] font-bold text-green-300/60 uppercase tracking-widest">Popular Pages</p>
+          <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+            {[
+              { label: 'Free Solar Calculator', href: 'solar-calculator/' },
+              { label: 'Solar in Lahore', href: 'solar-lahore/' },
+              { label: 'Solar in Faisalabad', href: 'solar-faisalabad/' },
+            ].map((l) => (
+              <a
+                key={l.href}
+                href={pageHref(l.href)}
+                className="text-xs text-green-100/70 hover:text-white transition-colors"
+              >
+                {l.label}
+              </a>
+            ))}
+          </nav>
+          <span className="hidden sm:block w-40" aria-hidden="true" />
         </div>
 
         {/* Bottom Bar */}

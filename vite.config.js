@@ -24,6 +24,14 @@ function prettyUrls() {
       // Canonical form of the calculator URL (matches hosts' own behavior)
       res.writeHead(301, { Location: '/solar-calculator/' });
       return res.end();
+    } else if (path === '/solar-lahore') {
+      // Canonical form of the Lahore landing page
+      res.writeHead(301, { Location: '/solar-lahore/' });
+      return res.end();
+    } else if (path === '/solar-faisalabad') {
+      // Canonical form of the Faisalabad landing page
+      res.writeHead(301, { Location: '/solar-faisalabad/' });
+      return res.end();
     }
     next();
   };
@@ -50,6 +58,8 @@ export default defineConfig({
       input: {
         main: resolve(import.meta.dirname, 'index.html'),
         calculator: resolve(import.meta.dirname, 'solar-calculator/index.html'),
+        lahore: resolve(import.meta.dirname, 'solar-lahore/index.html'),
+        faisalabad: resolve(import.meta.dirname, 'solar-faisalabad/index.html'),
       },
     },
   },

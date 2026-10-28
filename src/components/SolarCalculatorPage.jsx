@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaWhatsapp } from 'react-icons/fa';
 import {
@@ -185,6 +185,10 @@ export default function SolarCalculatorPage() {
   const [customOpen, setCustomOpen] = useState(false);
   const [custom, setCustom] = useState({ name: '', watts: '', hours: '' });
   const [showResult, setShowResult] = useState(false);
+  const [libOpen, setLibOpen] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches
+  );
+  const resultsRef = useRef(null);
 
   /* ---------------- appliance editors ---------------- */
   const updateItem = (uid, field, value) =>
@@ -210,6 +214,27 @@ export default function SolarCalculatorPage() {
     ]);
     setCustom({ name: '', watts: '', hours: '' });
     setCustomOpen(false);
+    closeLibOnMobile();
+  };
+
+  /* Library open/close helpers: on mobile the picker lives in a bottom
+     sheet, so we close it after an action to reveal the updated list. */
+  const closeLibOnMobile = () => {
+    if (typeof window !== 'undefined' && !window.matchMedia('(min-width: 1024px)').matches) setLibOpen(false);
+  };
+
+  const pickFromCatalog = (c) => {
+    addFromCatalog(c);
+    closeLibOnMobile();
+  };
+
+  const handleCalculate = () => {
+    if (!res) return;
+    setShowResult(true);
+    // let the section render & animate in before scrolling to it
+    requestAnimationFrame(() => setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120));
   };
 
   const reset = () => {
@@ -323,6 +348,86 @@ export default function SolarCalculatorPage() {
     );
   };
   const groupCount = (g) => CATALOG.filter((c) => c.group === g).length;
+
+  /* Shared appliance-picker content (used by the desktop inline panel and
+     the mobile bottom sheet). */
+  const Picker = (
+    <>
+                  {/* category chips */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {['All', ...ALL_GROUPS].map((g) => (
+                      <button
+                        key={g}
+                        onClick={() => setPickerCategory(g)}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${pickerCategory === g ? 'bg-green-700 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:text-green-700 hover:bg-green-50'
+                          }`}
+                      >
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+
+                  {customOpen && (
+                    <div className="mb-4 p-4 bg-green-50/60 border border-green-100 rounded-xl">
+                      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Custom Appliance</div>
+                      <div className="grid grid-cols-1 sm:grid-cols-[1.4fr,6rem,6rem,auto] gap-2.5 items-end">
+                        <label className="block">
+                          <span className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Name</span>
+                          <input
+                            value={custom.name}
+                            onChange={(e) => setCustom((c) => ({ ...c, name: e.target.value }))}
+                            placeholder="e.g. Aquarium Pump"
+                            className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+                          />
+                        </label>
+                        <NumInput label="Watts" value={custom.watts} onChange={(v) => setCustom((c) => ({ ...c, watts: v }))} suffix="W" />
+                        <NumInput label="Hrs / Day" value={custom.hours} onChange={(v) => setCustom((c) => ({ ...c, hours: v }))} min={0} max={24} step={0.5} suffix="h" />
+                        <button onClick={addCustom} className="bg-green-700 hover:bg-green-800 px-4 py-2.5 rounded-lg text-white font-bold text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
+                          <Plus className="w-4 h-4" /> Add
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* search */}
+                  <div className="relative mb-4">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      value={pickerSearch}
+                      onChange={(e) => setPickerSearch(e.target.value)}
+                      placeholder="Search appliances…"
+                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+                    />
+                  </div>
+
+                  {/* appliance buttons grouped */}
+                  <div className="max-h-72 overflow-y-auto space-y-4 pr-1">
+                    {visibleGroups.map((g) => {
+                      const GIcon = GROUP_ICONS[g] || Plug;
+                      const list = filterAppliances(g);
+                      if (list.length === 0) return null;
+                      return (
+                        <div key={g}>
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                            <GIcon className="w-3.5 h-3.5" /> {g} <span className="text-slate-300">· {list.length} items</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {list.map((c) => (
+                              <button key={c.key} onClick={() => pickFromCatalog(c)} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:border-green-400 hover:bg-green-50 hover:text-green-700 transition-all cursor-pointer">
+                                <c.icon className="w-3.5 h-3.5 text-green-600" />
+                                {c.name} <span className="text-slate-400 font-medium">{c.watts}W</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {visibleGroups.every((g) => filterAppliances(g).length === 0) && (
+                      <div className="text-xs text-slate-400 py-2">No matches — add it as a custom appliance instead.</div>
+                    )}
+                  </div>
+    </>
+  );
 
   /* ================================================================ */
   return (
@@ -484,93 +589,29 @@ export default function SolarCalculatorPage() {
                   )}
                 </div>
 
-                {/* ---- Add Appliance from Library ---- */}
-                <div className="mt-5 pt-5 border-t border-slate-100">
-                  <div className="flex items-center justify-between gap-3 mb-4">
+                {/* ---- Add Appliance (desktop: collapsible panel with + / ✕ toggle) ---- */}
+                <div className="mt-5 pt-5 border-t border-slate-100 hidden lg:block">
+                  <button
+                    onClick={() => setLibOpen((o) => !o)}
+                    aria-expanded={libOpen}
+                    className="w-full flex items-center justify-between gap-3 text-left cursor-pointer group"
+                  >
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                      <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2 group-hover:text-green-700 transition-colors">
                         <ClipboardList className="w-4 h-4 text-green-600" /> Add Appliance from Library
                       </h4>
-                      <p className="text-[11px] text-slate-500 mt-0.5">Choose from 42+ pre-defined appliances or add a custom one.</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        {libOpen ? 'Choose from 42+ pre-defined appliances or add a custom one.' : 'Click to browse 42+ pre-defined appliances or add a custom one.'}
+                      </p>
                     </div>
-                    <button onClick={() => setCustomOpen((o) => !o)} className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-green-600 text-green-700 text-xs font-bold hover:bg-green-50 transition-colors cursor-pointer whitespace-nowrap">
-                      <Plus className="w-3.5 h-3.5" /> Add Custom
-                    </button>
-                  </div>
+                    <span
+                      className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-colors duration-200 ${libOpen ? 'bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-600' : 'bg-green-700 text-white shadow-sm group-hover:bg-green-800'}`}
+                    >
+                      <Plus className={`w-4.5 h-4.5 transition-transform duration-300 ${libOpen ? 'rotate-45' : ''}`} />
+                    </span>
+                  </button>
 
-                  {/* category chips */}
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {['All', ...ALL_GROUPS].map((g) => (
-                      <button
-                        key={g}
-                        onClick={() => setPickerCategory(g)}
-                        className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${pickerCategory === g ? 'bg-green-700 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:text-green-700 hover:bg-green-50'
-                          }`}
-                      >
-                        {g}
-                      </button>
-                    ))}
-                  </div>
-
-                  {customOpen && (
-                    <div className="mb-4 p-4 bg-green-50/60 border border-green-100 rounded-xl">
-                      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Custom Appliance</div>
-                      <div className="grid grid-cols-1 sm:grid-cols-[1.4fr,6rem,6rem,auto] gap-2.5 items-end">
-                        <label className="block">
-                          <span className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Name</span>
-                          <input
-                            value={custom.name}
-                            onChange={(e) => setCustom((c) => ({ ...c, name: e.target.value }))}
-                            placeholder="e.g. Aquarium Pump"
-                            className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
-                          />
-                        </label>
-                        <NumInput label="Watts" value={custom.watts} onChange={(v) => setCustom((c) => ({ ...c, watts: v }))} suffix="W" />
-                        <NumInput label="Hrs / Day" value={custom.hours} onChange={(v) => setCustom((c) => ({ ...c, hours: v }))} min={0} max={24} step={0.5} suffix="h" />
-                        <button onClick={addCustom} className="bg-green-700 hover:bg-green-800 px-4 py-2.5 rounded-lg text-white font-bold text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
-                          <Plus className="w-4 h-4" /> Add
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* search */}
-                  <div className="relative mb-4">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                    <input
-                      value={pickerSearch}
-                      onChange={(e) => setPickerSearch(e.target.value)}
-                      placeholder="Search appliances…"
-                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
-                    />
-                  </div>
-
-                  {/* appliance buttons grouped */}
-                  <div className="max-h-72 overflow-y-auto space-y-4 pr-1">
-                    {visibleGroups.map((g) => {
-                      const GIcon = GROUP_ICONS[g] || Plug;
-                      const list = filterAppliances(g);
-                      if (list.length === 0) return null;
-                      return (
-                        <div key={g}>
-                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-                            <GIcon className="w-3.5 h-3.5" /> {g} <span className="text-slate-300">· {list.length} items</span>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {list.map((c) => (
-                              <button key={c.key} onClick={() => addFromCatalog(c)} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:border-green-400 hover:bg-green-50 hover:text-green-700 transition-all cursor-pointer">
-                                <c.icon className="w-3.5 h-3.5 text-green-600" />
-                                {c.name} <span className="text-slate-400 font-medium">{c.watts}W</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {visibleGroups.every((g) => filterAppliances(g).length === 0) && (
-                      <div className="text-xs text-slate-400 py-2">No matches — add it as a custom appliance instead.</div>
-                    )}
-                  </div>
+                  {libOpen && <div className="pt-4">{Picker}</div>}
                 </div>
               </div>
             </div>
@@ -683,7 +724,7 @@ export default function SolarCalculatorPage() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => setShowResult(true)}
+                    onClick={handleCalculate}
                     className="bg-green-700 hover:bg-green-800 px-6 py-3.5 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-colors cursor-pointer"
                   >
                     <Calculator className="w-5 h-5" /> Calculate My Solar System <ArrowRight className="w-4 h-4" />
@@ -698,9 +739,51 @@ export default function SolarCalculatorPage() {
         </div>
       </section>
 
+      {/* ---------- Mobile: floating Add button + bottom-sheet library ---------- */}
+      <button
+        onClick={() => setLibOpen((o) => !o)}
+        aria-label={libOpen ? 'Close appliance library' : 'Add appliances'}
+        className="lg:hidden fixed bottom-5 right-5 z-[70] w-14 h-14 rounded-full bg-green-700 hover:bg-green-800 text-white flex items-center justify-center shadow-xl active:scale-95 transition-all cursor-pointer"
+      >
+        <Plus className={`w-6 h-6 transition-transform duration-300 ${libOpen ? 'rotate-45' : ''}`} />
+      </button>
+
+      {libOpen && (
+        <div className="lg:hidden fixed inset-0 z-[60]">
+          <div
+            className="absolute inset-0 bg-slate-900/45 backdrop-blur-[2px]"
+            onClick={() => setLibOpen(false)}
+            aria-hidden="true"
+          />
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            transition={{ type: 'tween', duration: 0.28, ease: 'easeOut' }}
+            className="absolute inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl max-h-[82vh] flex flex-col"
+          >
+            <div className="sticky top-0 bg-white rounded-t-3xl px-5 pt-4 pb-3 border-b border-slate-100 flex items-center justify-between gap-3">
+              <div>
+                <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <ClipboardList className="w-4 h-4 text-green-600" /> Add Appliance from Library
+                </h4>
+                <p className="text-[11px] text-slate-500 mt-0.5">Choose from 42+ appliances or add a custom one.</p>
+              </div>
+              <button
+                onClick={() => setLibOpen(false)}
+                aria-label="Close"
+                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 flex items-center justify-center shrink-0 transition-colors cursor-pointer"
+              >
+                <Plus className="w-4.5 h-4.5 rotate-45" />
+              </button>
+            </div>
+            <div className="overflow-y-auto px-5 py-4 overscroll-contain">{Picker}</div>
+          </motion.div>
+        </div>
+      )}
+
       {/* ---------- Results ---------- */}
       {showResult && res && (
-        <section className="pb-16 relative">
+        <section ref={resultsRef} className="pb-16 relative scroll-mt-24">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
 
