@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sun, Phone } from 'lucide-react';
+import { Menu, X, Calculator } from 'lucide-react';
 
 // Relative, trailing-slash URL: resolves correctly at a domain root
 // (/, /solar-calculator/) AND under a subpath deploy (e.g. GitHub Pages).
@@ -8,7 +8,6 @@ const CALC_URL = 'solar-calculator/';
 
 const navItems = [
   { label: 'Home', to: 'hero' },
-  { label: 'Solar Calculator', to: CALC_URL, isRoute: true },
   { label: 'About', to: 'about' },
   { label: 'Products', to: 'products' },
   { label: 'Services', to: 'services' },
@@ -18,7 +17,7 @@ const navItems = [
 ];
 
 /**
- * Brand heading uses a styled <div> (not <h1>) so each page has exactly one H1.
+ * Light, clean navbar matching the green SolarCalc concept.
  * When `offHome` is true the component renders on /solar-calculator and all
  * section links point back to the home page ("/#section").
  */
@@ -44,19 +43,12 @@ export default function Navbar({ offHome = false }) {
   }, []);
 
   const isActive = (item) => {
-    // Path-based check (works both at domain root and subpath deploys)
-    if (item.isRoute) {
-      return window.location.pathname.toLowerCase().includes('solar-calculator') && activeHash === '';
-    }
     if (offHome) return false;
     return activeHash === '' && item.to === 'hero';
   };
 
   // On the calculator page, section anchors must climb back to the home directory
-  const hrefFor = (item) => {
-    if (item.isRoute) return CALC_URL;
-    return offHome ? `../#${item.to}` : `#${item.to}`;
-  };
+  const hrefFor = (item) => (offHome ? `../#${item.to}` : `#${item.to}`);
 
   return (
     <>
@@ -64,10 +56,8 @@ export default function Navbar({ offHome = false }) {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200 py-3 shadow-sm'
-            : 'bg-transparent py-5'
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-xl border-b border-slate-100 ${
+          scrolled ? 'py-2.5 shadow-md shadow-slate-200/50' : 'py-3.5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,32 +66,34 @@ export default function Navbar({ offHome = false }) {
             <motion.a
               href={offHome ? '../' : '#hero'}
               whileHover={{ scale: 1.05 }}
-              className="flex items-center gap-3"
+              className="flex items-center gap-2.5"
               aria-label="SolarTech Energy Solutions — home"
             >
-              <div className="relative">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-200/60">
-                  <Sun className="w-6 h-6 text-white" />
-                </div>
+              <div className="relative w-9 h-9 flex items-center justify-center">
+                <span className="absolute w-8 h-8 rounded-full bg-amber-300/70 blur-[6px] -top-1 -left-1" />
+                <span className="relative w-8 h-8 grid grid-cols-2 grid-rows-2 gap-[2px] rounded-bl-full rounded-tr-full overflow-hidden">
+                  <span className="bg-green-700 rounded-tr-sm rounded-bl-md" />
+                  <span className="bg-green-500 rounded-tr-full" />
+                  <span className="bg-green-600 rounded-bl-full" />
+                  <span className="bg-amber-400 rounded-bl-sm" />
+                </span>
               </div>
               <div>
-                <div className="text-xl font-black gradient-text">SolarTech</div>
-                <p className="text-[10px] text-gray-400 font-medium tracking-widest uppercase">Energy Solutions</p>
+                <div className="text-lg font-black bg-[linear-gradient(135deg,#166534,#15803d)] bg-clip-text text-transparent">SolarTech</div>
+                <p className="text-[9px] text-slate-400 font-semibold tracking-wider uppercase leading-none">Clean Energy. Brighter Future.</p>
               </div>
             </motion.a>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-5 xl:gap-8">
+            <div className="hidden lg:flex items-center gap-6 xl:gap-7">
               {navItems.map((item) => (
                 <a
                   key={item.to}
                   href={hrefFor(item)}
-                  className={`nav-link text-sm font-medium cursor-pointer transition-colors duration-200 ${
+                  className={`relative text-sm font-medium cursor-pointer transition-colors duration-200 py-1 ${
                     isActive(item)
-                      ? (scrolled || offHome ? 'text-orange-500' : 'text-orange-400') + ' font-semibold'
-                      : (scrolled || offHome)
-                        ? 'text-slate-700 hover:text-orange-500'
-                        : 'text-white/85 hover:text-orange-400'
+                      ? 'text-green-700 font-semibold after:absolute after:-bottom-0.5 after:left-0 after:right-0 after:h-0.5 after:bg-green-600 after:rounded-full'
+                      : 'text-slate-600 hover:text-green-700'
                   }`}
                 >
                   {item.label}
@@ -111,24 +103,14 @@ export default function Navbar({ offHome = false }) {
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center gap-4">
-              <a
-                href="tel:+923015935773"
-                className={`flex items-center gap-2 text-sm transition-colors ${
-                  scrolled || offHome
-                    ? 'text-slate-700 hover:text-orange-500'
-                    : 'text-white/85 hover:text-orange-400'
-                }`}
-              >
-                <Phone className="w-4 h-4" />
-                <span>+92 301 5935 773</span>
-              </a>
-              <a href={offHome ? '../#contact' : '#contact'}>
+              <a href={offHome ? '../solar-calculator/' : CALC_URL}>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="btn-primary px-6 py-2.5 rounded-full text-sm font-semibold text-white"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-green-500/70 text-green-700 bg-white hover:bg-green-50 text-sm font-bold transition-colors"
                 >
-                  Get Free Quote
+                  <Calculator className="w-4 h-4" />
+                  Solar Calculator
                 </motion.button>
               </a>
             </div>
@@ -136,7 +118,7 @@ export default function Navbar({ offHome = false }) {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden p-2 rounded-lg glass text-white"
+              className="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 border border-slate-200"
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             >
               {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -153,26 +135,24 @@ export default function Navbar({ offHome = false }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-[72px] left-0 right-0 z-40 glass-dark border-b border-white/10 lg:hidden"
+            className="fixed top-[64px] left-0 right-0 z-40 bg-white/98 backdrop-blur-xl border-b border-slate-100 shadow-xl lg:hidden"
           >
-            <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-4">
+            <div className="max-w-7xl mx-auto px-4 py-5 flex flex-col gap-1">
               {navItems.map((item) => (
                 <a
                   key={item.to}
                   href={hrefFor(item)}
                   onClick={handleNavClick}
-                  className={`font-medium py-2 border-b border-white/5 cursor-pointer transition-colors ${
-                    isActive(item)
-                      ? 'text-orange-400 font-semibold'
-                      : 'text-gray-300 hover:text-orange-400'
+                  className={`font-medium py-2.5 px-3 rounded-lg border-b border-slate-50 cursor-pointer transition-colors ${
+                    isActive(item) ? 'text-green-700 font-semibold bg-green-50' : 'text-slate-600 hover:text-green-700 hover:bg-green-50/60'
                   }`}
                 >
                   {item.label}
                 </a>
               ))}
-              <a href={offHome ? '../#contact' : '#contact'} onClick={handleNavClick}>
-                <button className="btn-primary w-full py-3 rounded-xl font-semibold text-white mt-2">
-                  Get Free Quote
+              <a href={offHome ? '../solar-calculator/' : CALC_URL} onClick={handleNavClick}>
+                <button className="mt-3 w-full py-3 rounded-xl bg-green-700 hover:bg-green-800 font-semibold text-white flex items-center justify-center gap-2">
+                  <Calculator className="w-4 h-4" /> Solar Calculator
                 </button>
               </a>
             </div>
