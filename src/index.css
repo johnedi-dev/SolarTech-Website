@@ -288,14 +288,14 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(180deg, #FFFFFF 0%, #F9FBF7 50%, #FFFFFF 100%);
 }
 
-/* Hero overlay — left-weighted navy scrim fading to fully clear video */
+/* Hero overlay — light green scrim on the left (dark text readable), video fully visible on the right */
 .hero-overlay {
   background: linear-gradient(
     to right,
-    rgba(16, 26, 53, 0.78) 0%,
-    rgba(16, 26, 53, 0.45) 40%,
-    rgba(16, 26, 53, 0.12) 70%,
-    rgba(16, 26, 53, 0) 100%
+    rgba(255, 255, 255, 0.97) 0%,
+    rgba(240, 253, 244, 0.94) 38%,
+    rgba(240, 253, 244, 0.55) 62%,
+    rgba(240, 253, 244, 0) 88%
   );
 }
 

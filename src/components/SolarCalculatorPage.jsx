@@ -6,8 +6,9 @@ import {
   Lightbulb, Fan, Refrigerator, Snowflake, Tv, Wifi, Monitor, Microwave,
   WashingMachine, Gamepad2, Waves, ShowerHead, AirVent, Thermometer,
   Speaker, Cctv, CookingPot, Plug, PlugZap, Sparkles, TrendingDown,
-  CircleDollarSign, ArrowLeft, Info, RotateCcw, CheckCircle2, CalendarRange,
-  Gauge, SunMedium, Layers, Search,
+  CircleDollarSign, ArrowRight, ArrowLeft, Info, RotateCcw, CheckCircle2,
+  CalendarRange, Gauge, Moon, Search, ChevronDown, ShieldCheck, Battery,
+  ClipboardList, Home,
 } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
@@ -47,12 +48,21 @@ const CATALOG = [
 ];
 
 const DEFAULT_ITEMS = [
-  { uid: 1, key: 'led-bulb', name: 'LED Bulb', watts: 12, qty: 8, hours: 5, icon: Lightbulb },
-  { uid: 2, key: 'ceiling-fan', name: 'Ceiling Fan', watts: 80, qty: 3, hours: 10, icon: Fan },
-  { uid: 3, key: 'fridge', name: 'Refrigerator (Inverter)', watts: 150, qty: 1, hours: 24, icon: Refrigerator },
-  { uid: 4, key: 'tv', name: 'LED TV (55")', watts: 100, qty: 1, hours: 5, icon: Tv },
-  { uid: 5, key: 'router', name: 'Wi-Fi Router', watts: 12, qty: 1, hours: 24, icon: Wifi },
+  { uid: 1, key: 'led-bulb', name: 'LED Bulb', group: 'Lighting', watts: 12, qty: 8, hours: 5, icon: Lightbulb },
+  { uid: 2, key: 'ceiling-fan', name: 'Ceiling Fan', group: 'Cooling', watts: 80, qty: 3, hours: 10, icon: Fan },
+  { uid: 3, key: 'fridge', name: 'Refrigerator (Inverter)', group: 'Kitchen', watts: 150, qty: 1, hours: 24, icon: Refrigerator },
+  { uid: 4, key: 'tv', name: 'LED TV (55")', group: 'Electronics', watts: 100, qty: 1, hours: 5, icon: Tv },
+  { uid: 5, key: 'router', name: 'Wi-Fi Router', group: 'Electronics', watts: 12, qty: 1, hours: 24, icon: Wifi },
 ];
+
+const GROUP_ICONS = {
+  Lighting: Lightbulb,
+  Cooling: Fan,
+  Kitchen: Refrigerator,
+  Laundry: WashingMachine,
+  Electronics: Tv,
+  'Water & Utility': Waves,
+};
 
 /* ------------------------------------------------------------------ */
 /* Sizing constants & helpers                                          */
@@ -89,7 +99,7 @@ function NumInput({ label, value, onChange, min = 0, max = 1000000, step = 1, su
             if (e.target.value === '') return onChange('');
             onChange(clamp(parseFloat(e.target.value) || 0, min, max));
           }}
-          className={`w-full bg-slate-50 border border-slate-200 rounded-lg py-2.5 text-slate-900 font-semibold text-sm focus:outline-none focus:border-amber-300 transition-colors ${suffix ? 'pr-10 pl-3' : 'px-3'}`}
+          className={`w-full bg-white border border-slate-200 rounded-lg py-2.5 text-slate-900 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all ${suffix ? 'pr-10 pl-3' : 'px-3'}`}
         />
         {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">{suffix}</span>}
       </div>
@@ -97,28 +107,61 @@ function NumInput({ label, value, onChange, min = 0, max = 1000000, step = 1, su
   );
 }
 
-function StatChip({ icon, label, value }) {
+/* Compact inline number cell used in the appliance table rows */
+function CellInput({ value, onChange, min = 0, max = 1000000, step = 1 }) {
   return (
-    <div className="glass rounded-xl px-4 py-3 flex items-center gap-3 border border-white/10">
-      <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">{icon}</div>
-      <div className="min-w-0">
-        <div className="text-slate-900 font-black text-base sm:text-lg leading-tight truncate">{value}</div>
-        <div className="text-slate-500 text-[10px] sm:text-xs font-medium">{label}</div>
+    <input
+      type="number"
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      onChange={(e) => {
+        if (e.target.value === '') return onChange('');
+        onChange(clamp(parseFloat(e.target.value) || 0, min, max));
+      }}
+      className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-sm font-semibold text-slate-900 text-center focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all"
+    />
+  );
+}
+
+function StatBox({ icon: Icon, iconBg, label, value, unit }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl p-4 flex-1 min-w-0">
+      <div className={`w-9 h-9 rounded-lg ${iconBg} flex items-center justify-center mb-3`}>
+        <Icon className="w-5 h-5" />
+      </div>
+      <div className="text-slate-500 text-[11px] font-semibold">{label}</div>
+      <div className="flex items-baseline gap-1">
+        <span className="text-xl sm:text-2xl font-black text-slate-900">{value}</span>
+        {unit && <span className="text-[10px] font-semibold text-slate-400">{unit}</span>}
       </div>
     </div>
   );
 }
 
-function ResultCard({ icon, title, headline, sub, children, accent = 'bg-orange-500/10', accentText = 'text-orange-500' }) {
+function ResultCard({ icon: Icon, iconWrap, accentText, tint = 'bg-white border-slate-200', title, headline, sub, children }) {
   return (
-    <div className="glass rounded-2xl p-5 border border-white/10 shadow-sm">
+    <div className={`${tint} rounded-2xl p-5 border shadow-sm`}>
       <div className="flex items-center gap-3 mb-3">
-        <div className={`w-10 h-10 ${accent} rounded-xl flex items-center justify-center shrink-0`}>{icon}</div>
-        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{title}</div>
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${iconWrap}`}>
+          <Icon className="w-5 h-5" />
+        </div>
+        <div className="text-sm font-bold text-slate-900">{title}</div>
+        <ArrowRight className="w-4 h-4 text-slate-300 ml-auto rotate-[-45deg]" />
       </div>
       <div className={`text-2xl sm:text-3xl font-black ${accentText} mb-1`}>{headline}</div>
-      {sub && <div className="text-xs text-slate-500 font-medium mb-2">{sub}</div>}
+      {sub && <div className="text-xs text-slate-500 font-medium mb-1">{sub}</div>}
       {children && <div className="mt-3 border-t border-slate-200/70 pt-3 space-y-1.5 text-xs text-slate-600">{children}</div>}
+    </div>
+  );
+}
+
+function Line({ label, value }) {
+  return (
+    <div className="flex justify-between gap-2">
+      <span>{label}</span>
+      <strong className="text-slate-800 text-right">{value}</strong>
     </div>
   );
 }
@@ -137,8 +180,9 @@ export default function SolarCalculatorPage() {
   const [panelWatt, setPanelWatt] = useState(585);
   const [batteryType, setBatteryType] = useState('lithium');
 
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [pickerSearch, setPickerSearch] = useState('');
+  const [pickerCategory, setPickerCategory] = useState('All');
+  const [customOpen, setCustomOpen] = useState(false);
   const [custom, setCustom] = useState({ name: '', watts: '', hours: '' });
   const [showResult, setShowResult] = useState(false);
 
@@ -152,7 +196,7 @@ export default function SolarCalculatorPage() {
     setItems((prev) => {
       const existing = prev.find((i) => i.key === c.key);
       if (existing) return prev.map((i) => (i.key === c.key ? { ...i, qty: i.qty + 1 } : i));
-      return [...prev, { uid: Date.now() + Math.random(), key: c.key, name: c.name, watts: c.watts, qty: 1, hours: c.hours, icon: c.icon }];
+      return [...prev, { uid: Date.now() + Math.random(), key: c.key, name: c.name, group: c.group, watts: c.watts, qty: 1, hours: c.hours, icon: c.icon }];
     });
   };
 
@@ -162,9 +206,10 @@ export default function SolarCalculatorPage() {
     if (!custom.name.trim() || watts <= 0) return;
     setItems((prev) => [
       ...prev,
-      { uid: Date.now() + Math.random(), key: `custom-${Date.now()}`, name: custom.name.trim(), watts, qty: 1, hours, icon: Plug },
+      { uid: Date.now() + Math.random(), key: `custom-${Date.now()}`, name: custom.name.trim(), group: 'Custom', watts, qty: 1, hours, icon: Plug },
     ]);
     setCustom({ name: '', watts: '', hours: '' });
+    setCustomOpen(false);
   };
 
   const reset = () => {
@@ -207,6 +252,10 @@ export default function SolarCalculatorPage() {
     // Inverter: peak running load × 25% headroom; must also process the array (hybrid) and supply avg load
     const avgLoadW = (dailyKwhDesign * 1000) / 24;
     const inverterKw = snapUp(Math.max(summary.peakKw * 1.25, arrayKw / 1.6, avgLoadW / 900 + 0.6));
+    const invIdx = INVERTER_SIZES.indexOf(inverterKw);
+    const inverterRange = invIdx >= 0 && invIdx < INVERTER_SIZES.length - 1
+      ? `${INVERTER_SIZES[invIdx]}–${INVERTER_SIZES[invIdx + 1]} kW`
+      : `≥ ${inverterKw} kW`;
 
     // Battery bank: average load × backup hours, corrected for efficiency & depth-of-discharge
     const backup = clamp(num(backupHours), 0, 24);
@@ -215,10 +264,11 @@ export default function SolarCalculatorPage() {
       const storeWh = (avgLoadW * backup) / 0.9; // energy through inverter (~90% eff.)
       if (batteryType === 'lithium') {
         const nameplateKwh = storeWh / 0.9 / 1000;          // LiFePO4 DoD 90%
+        const modules = Math.max(1, Math.ceil(nameplateKwh / LITHIUM_MODULE_KWH));
         battery = {
           nameplateKwh,
-          modules: Math.max(1, Math.ceil(nameplateKwh / LITHIUM_MODULE_KWH)),
-          label: `Lithium — ${Math.max(1, Math.ceil(nameplateKwh / LITHIUM_MODULE_KWH))} × 48V/100Ah LiFePO4`,
+          modules,
+          label: `${modules} × ${LITHIUM_MODULE_KWH} kWh (Lithium)`,
         };
       } else {
         const battVoltage = summary.peakKw > 3 ? 48 : 24;
@@ -229,7 +279,7 @@ export default function SolarCalculatorPage() {
           perString,
           strings,
           voltage: battVoltage,
-          label: `12V/185Ah tubular batteries (strings of ${perString} in series @ ${battVoltage}V)`,
+          label: `${strings * perString} × 12V/185Ah tubular (Lead-Acid)`,
         };
       }
     }
@@ -256,317 +306,393 @@ export default function SolarCalculatorPage() {
     const co2 = (designUnits * 12 * 0.57) / 1000; // tons/yr, grid factor ~0.57 kg CO₂/kWh
     const roofSqft = panelCount * 29;
 
-    return { hasBills, billAvg, designUnits, dailyKwhDesign, sun, pvKw, panelCount, arrayKw, inverterKw, battery, avgLoadW, backup, nightShare, panelsCost, inverterCost, batteryCost, bosCost, totalCost, T, monthlySave, annualSave, payback, co2, roofSqft };
+    // Cross-check difference %
+    const diffPct = hasBills && billAvg > 0 && summary.unitsPerMonth > 0
+      ? (Math.abs(summary.unitsPerMonth - billAvg) / Math.max(billAvg, summary.unitsPerMonth)) * 100
+      : null;
+
+    return { hasBills, billAvg, designUnits, dailyKwhDesign, sun, pvKw, panelCount, arrayKw, inverterKw, inverterRange, battery, avgLoadW, backup, nightShare, panelsCost, inverterCost, batteryCost, bosCost, totalCost, T, monthlySave, annualSave, payback, co2, roofSqft, diffPct };
   }, [tab, items, unitsMin, unitsMax, tariff, sunHours, backupHours, panelWatt, batteryType, summary]);
 
-  const filteredCatalog = CATALOG.filter(
-    (c) =>
-      c.name.toLowerCase().includes(pickerSearch.toLowerCase()) ||
-      c.group.toLowerCase().includes(pickerSearch.toLowerCase())
-  );
-  const groups = [...new Set(filteredCatalog.map((c) => c.group))];
+  const ALL_GROUPS = [...new Set(CATALOG.map((c) => c.group))];
+  const visibleGroups = pickerCategory === 'All' ? ALL_GROUPS : [pickerCategory];
+  const filterAppliances = (g) => {
+    const q = pickerSearch.toLowerCase();
+    return CATALOG.filter(
+      (c) => c.group === g && (c.name.toLowerCase().includes(q) || g.toLowerCase().includes(q))
+    );
+  };
+  const groupCount = (g) => CATALOG.filter((c) => c.group === g).length;
 
   /* ================================================================ */
   return (
-    <div className="bg-slate-50">
-      {/* ---------- Page header ---------- */}
-      <section className="relative overflow-hidden border-b border-slate-200 section-gradient">
-        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-amber-400/20 blur-3xl" />
-        <div className="absolute -bottom-32 -left-24 w-80 h-80 rounded-full bg-blue-500/10 blur-3xl" />
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-12 text-center">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-0.5 bg-orange-500" />
-            <span className="text-orange-500 font-semibold text-xs sm:text-sm uppercase tracking-widest">Free Load &amp; Sizing Tool</span>
-            <div className="w-8 h-0.5 bg-orange-500" />
+    <div className="bg-slate-50 min-h-screen">
+      {/* ---------- Page header (green banner) ---------- */}
+      <section className="relative overflow-hidden bg-gradient-to-r from-green-100 via-emerald-50 to-green-50 border-b border-green-100">
+        <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-green-300/20 blur-3xl" />
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-10">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center shadow-md shrink-0">
+              <Sun className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-2">Solar Load Calculator</h1>
+              <p className="text-slate-600 text-sm sm:text-base max-w-2xl">
+                Calculate your home's energy needs and get a complete solar system recommendation with costs, savings and more.
+              </p>
+            </div>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 mb-4">
-            Solar <span className="gradient-text">Load Calculator</span>
-          </h1>
-          <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto">
-            List the appliances you use at home (or enter your bill units) and get an instant, item-wise estimate of the
-            <strong className="text-slate-800"> solar panels, inverter and batteries</strong> your home actually needs — measured in
-            <strong className="text-slate-800"> kWh and units</strong>.
-          </p>
         </div>
       </section>
 
-      {/* ---------- Input section ---------- */}
-      <section className="relative py-10 sm:py-14">
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="glass-dark rounded-3xl p-5 sm:p-8 border border-white/10 shadow-2xl">
-            {/* Method tabs */}
-            <div className="flex flex-wrap gap-2 mb-6 justify-center">
+      {/* ---------- How It Works ---------- */}
+      <section className="pt-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+            <h3 className="text-lg font-black text-slate-900 mb-1">How It Works</h3>
+            {/* <p className="text-xs text-slate-500 mb-6">Get your solar system in just three simple steps.</p> */}
+            <div className="grid sm:grid-cols-3 gap-4 sm:items-center relative">
               {[
-                { id: 'appliances', label: 'Appliance Method', icon: Calculator, hint: 'List every appliance with its usage hours — we compute kW/h, monthly units and peak load automatically.' },
-                { id: 'bills', label: 'Bill / Units Method', icon: FileSpreadsheet, hint: 'Use your highest & lowest monthly units from recent bills — the bill average sizes the system.' },
-              ].map((t) => {
-                const TIcon = t.icon;
+                { n: 1, icon: ClipboardList, t: 'List or Enter Your Load', d: 'Add appliances from our library or enter your monthly units (bill method).' },
+                { n: 2, icon: Calculator, t: 'We Calculate', d: 'Our smart engine sizes the right system for your home and budget.' },
+                { n: 3, icon: Home, t: 'Get a Sized System', d: 'View your solar setup, cost, savings, payback and more — then get a quote!' },
+              ].map((s, idx) => {
+                const SIcon = s.icon;
                 return (
-                  <button
-                    key={t.id}
-                    onClick={() => setTab(t.id)}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                      tab === t.id ? 'btn-primary text-white shadow-md' : 'glass border border-slate-200 text-slate-600 hover:text-amber-600 hover:border-amber-300/40'
-                    }`}
-                  >
-                    <TIcon className="w-4 h-4" />
-                    {t.label}
-                  </button>
+                  <div key={s.n} className="relative">
+                    <div className="bg-emerald-50/70 border border-green-100 rounded-2xl p-5 flex gap-4 h-full">
+                      <div className="w-9 h-9 rounded-full bg-green-700 text-white font-black text-sm flex items-center justify-center shrink-0">{s.n}</div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <SIcon className="w-4 h-4 text-green-600" />
+                          <h4 className="text-sm font-bold text-slate-900">{s.t}</h4>
+                        </div>
+                        <p className="text-xs text-slate-500 leading-relaxed">{s.d}</p>
+                      </div>
+                    </div>
+                    {idx < 2 && (
+                      <ArrowRight className="hidden sm:block absolute top-1/2 -translate-y-1/2 -right-3.5 w-5 h-5 text-green-400 z-10" />
+                    )}
+                  </div>
                 );
               })}
             </div>
-            <p className="text-center text-xs text-slate-500 mb-8 flex items-center justify-center gap-1.5">
-              <Info className="w-3.5 h-3.5 shrink-0 text-orange-400" />
-              {tab === 'appliances'
-                ? 'Add every appliance you run at home. Change wattages, quantities and hours to match your real usage.'
-                : 'Enter your highest (summer) and lowest (winter) monthly units from electricity bills — covers seasonal variation automatically.'}
-            </p>
+          </div>
+        </div>
+      </section>
 
-            <div className="grid lg:grid-cols-5 gap-8">
-              {/* ================= Left: inputs ================= */}
-              <div className="lg:col-span-3 space-y-6">
-                {tab === 'bills' && (
-                  <div className="glass rounded-2xl p-5 border border-white/10">
-                    <h3 className="text-sm font-bold text-slate-900 mb-1 flex items-center gap-2">
-                      <FileSpreadsheet className="w-4 h-4 text-orange-500" /> Monthly Units from Bills
-                    </h3>
-                    <p className="text-[11px] text-slate-500 mb-4">Check your past bills — enter the highest &amp; lowest months for maximum accuracy. 1 unit = 1 kWh.</p>
-                    <div className="grid grid-cols-2 gap-4">
-                      <NumInput label="Max Units / Month (Summer)" value={unitsMax} onChange={setUnitsMax} suffix="units" />
-                      <NumInput label="Min Units / Month (Winter)" value={unitsMin} onChange={setUnitsMin} suffix="units" />
+      {/* ---------- Dashboard: two columns ---------- */}
+      <section className="py-8 sm:py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-12 gap-6">
+
+            {/* ================= LEFT: appliances ================= */}
+            <div className="lg:col-span-7 space-y-6">
+
+              {/* Method tabs */}
+              <div className="inline-flex bg-slate-100 rounded-xl p-1 gap-1">
+                {[
+                  { id: 'appliances', label: 'Appliance Method', icon: Calculator },
+                  { id: 'bills', label: 'Bill / Units Method', icon: FileSpreadsheet },
+                ].map((t) => {
+                  const TIcon = t.icon;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setTab(t.id)}
+                      className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${tab === t.id ? 'bg-green-700 text-white shadow-md' : 'text-slate-600 hover:text-green-700'
+                        }`}
+                    >
+                      <TIcon className="w-4 h-4" />
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
+              {tab === 'bills' && (
+                <p className="text-xs text-slate-500 -mt-3 flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5 shrink-0 text-green-500" />
+                  Enter your highest (summer) and lowest (winter) monthly units — covers seasonal variation automatically.
+                </p>
+              )}
+
+              {/* Bill inputs (bill method only) */}
+              {tab === 'bills' && (
+                <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                  <h3 className="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+                    <FileSpreadsheet className="w-5 h-5 text-green-600" /> Monthly Units from Bills
+                  </h3>
+                  <p className="text-xs text-slate-500 mb-4">Check your past bills — enter the highest &amp; lowest months. 1 unit = 1 kWh.</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <NumInput label="Max Units / Month (Summer)" value={unitsMax} onChange={setUnitsMax} suffix="units" />
+                    <NumInput label="Min Units / Month (Winter)" value={unitsMin} onChange={setUnitsMin} suffix="units" />
+                  </div>
+                  {num(unitsMax) > 0 && num(unitsMin) > 0 && (
+                    <div className="mt-4 p-3 rounded-xl bg-green-50 border border-green-200 text-xs text-green-800 font-semibold flex items-center gap-2">
+                      <CalendarRange className="w-4 h-4 shrink-0" />
+                      Bill average: <strong>{fmt((num(unitsMax) + num(unitsMin)) / 2)} units/month</strong> (range {fmt(num(unitsMin))} – {fmt(num(unitsMax))})
                     </div>
-                    {num(unitsMax) > 0 && num(unitsMin) > 0 && (
-                      <div className="mt-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-700 font-semibold flex items-center gap-2">
-                        <CalendarRange className="w-4 h-4 shrink-0" />
-                        Bill average: <strong>{fmt((num(unitsMax) + num(unitsMin)) / 2)} units/month</strong> (range {fmt(num(unitsMin))} – {fmt(num(unitsMax))})
-                      </div>
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
+              )}
 
-                {/* Appliance editor */}
-                <div className="glass rounded-2xl p-5 border border-white/10">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                      <PlugZap className="w-4 h-4 text-orange-500" /> Home Appliances
-                    </h3>
-                    <span className="text-[11px] text-slate-500 font-medium">{summary.count} items running</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mb-4">
-                    {tab === 'bills' ? 'Optional — but improves peak-load, inverter & battery accuracy.' : 'Correct the wattage of each device if you know it.'}
-                  </p>
+              {/* Your Appliances (table) */}
+              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm">
+                <div className="flex items-baseline justify-between gap-3 mb-1">
+                  <h3 className="text-lg font-black text-slate-900">Your Appliances</h3>
+                  <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">
+                    {summary.count} items · {fmt(summary.dailyKwh, 1)} kWh/day
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mb-4">Add your household devices with their power, quantity and daily usage.</p>
 
-                  {/* rows */}
-                  <div className="space-y-3 max-h-[430px] overflow-y-auto pr-1">
-                    {items.map((i) => {
-                      const Icon = i.icon || Plug;
-                      const wh = (i.watts * i.qty * clamp(num(i.hours), 0, 24)) / 1000;
-                      return (
-                        <div key={i.uid} className="glass rounded-xl p-3 border border-white/10">
-                          <div className="flex items-center justify-between gap-2 mb-2.5">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
-                                <Icon className="w-4 h-4 text-orange-500" />
-                              </div>
-                              <span className="text-sm font-semibold text-slate-800 truncate">{i.name}</span>
-                            </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                              <span className="text-[11px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-1 rounded-md whitespace-nowrap">{fmt(wh, 1)} kWh/day</span>
-                              <button onClick={() => removeItem(i.uid)} className="w-7 h-7 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-500 hover:bg-rose-500/20 transition-colors cursor-pointer" aria-label={`Remove ${i.name}`}>
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
+                {/* column headers (desktop) */}
+                <div className="hidden md:grid grid-cols-[minmax(0,1fr)_4.5rem_3.5rem_4.5rem_5.5rem_2rem] gap-2 px-2 pb-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+                  <span>Appliance</span><span>Watts</span><span>Qty</span><span>Hrs/Day</span><span>Daily kWh</span><span />
+                </div>
+
+                {/* rows */}
+                <div className="divide-y divide-slate-100 max-h-[480px] overflow-y-auto">
+                  {items.map((i) => {
+                    const Icon = i.icon || Plug;
+                    const wh = (i.watts * i.qty * clamp(num(i.hours), 0, 24)) / 1000;
+                    return (
+                      <div key={i.uid} className="py-3 px-1 md:px-2 grid md:grid-cols-[minmax(0,1fr)_4.5rem_3.5rem_4.5rem_5.5rem_2rem] gap-2 items-center">
+                        <div className="flex items-center gap-3 min-w-0 mb-2 md:mb-0">
+                          <div className="w-10 h-10 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center shrink-0">
+                            <Icon className="w-5 h-5 text-green-600" />
                           </div>
-                          <div className="grid grid-cols-3 gap-2.5">
-                            <NumInput label="Watts" value={i.watts} onChange={(v) => updateItem(i.uid, 'watts', v)} suffix="W" />
-                            <NumInput label="Qty" value={i.qty} onChange={(v) => updateItem(i.uid, 'qty', v)} min={0} max={99} />
-                            <NumInput label="Hrs / Day" value={i.hours} onChange={(v) => updateItem(i.uid, 'hours', v)} min={0} max={24} step={0.5} suffix="h" />
+                          <div className="min-w-0">
+                            <div className="text-sm font-bold text-slate-800 truncate">{i.name}</div>
+                            <span className="inline-block mt-0.5 text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded uppercase tracking-wider">{i.group || 'Custom'}</span>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 md:contents">
+                          <CellInput value={i.watts} onChange={(v) => updateItem(i.uid, 'watts', v)} step={1} />
+                          <CellInput value={i.qty} onChange={(v) => updateItem(i.uid, 'qty', v)} min={0} max={99} />
+                          <CellInput value={i.hours} onChange={(v) => updateItem(i.uid, 'hours', v)} min={0} max={24} step={0.5} />
+                        </div>
+                        <span className="text-sm font-black text-slate-700 md:text-right">{fmt(wh, 2)}</span>
+                        <button onClick={() => removeItem(i.uid)} className="w-8 h-8 rounded-lg text-rose-400 hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors cursor-pointer justify-self-end" aria-label={`Remove ${i.name}`}>
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                  {items.length === 0 && (
+                    <div className="text-center py-8 text-slate-400 text-sm">No appliances added yet — add some from the library below.</div>
+                  )}
+                </div>
+
+                {/* ---- Add Appliance from Library ---- */}
+                <div className="mt-5 pt-5 border-t border-slate-100">
+                  <div className="flex items-center justify-between gap-3 mb-4">
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <ClipboardList className="w-4 h-4 text-green-600" /> Add Appliance from Library
+                      </h4>
+                      <p className="text-[11px] text-slate-500 mt-0.5">Choose from 42+ pre-defined appliances or add a custom one.</p>
+                    </div>
+                    <button onClick={() => setCustomOpen((o) => !o)} className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-green-600 text-green-700 text-xs font-bold hover:bg-green-50 transition-colors cursor-pointer whitespace-nowrap">
+                      <Plus className="w-3.5 h-3.5" /> Add Custom
+                    </button>
+                  </div>
+
+                  {/* category chips */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {['All', ...ALL_GROUPS].map((g) => (
+                      <button
+                        key={g}
+                        onClick={() => setPickerCategory(g)}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${pickerCategory === g ? 'bg-green-700 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:text-green-700 hover:bg-green-50'
+                          }`}
+                      >
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+
+                  {customOpen && (
+                    <div className="mb-4 p-4 bg-green-50/60 border border-green-100 rounded-xl">
+                      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Custom Appliance</div>
+                      <div className="grid grid-cols-1 sm:grid-cols-[1.4fr,6rem,6rem,auto] gap-2.5 items-end">
+                        <label className="block">
+                          <span className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Name</span>
+                          <input
+                            value={custom.name}
+                            onChange={(e) => setCustom((c) => ({ ...c, name: e.target.value }))}
+                            placeholder="e.g. Aquarium Pump"
+                            className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+                          />
+                        </label>
+                        <NumInput label="Watts" value={custom.watts} onChange={(v) => setCustom((c) => ({ ...c, watts: v }))} suffix="W" />
+                        <NumInput label="Hrs / Day" value={custom.hours} onChange={(v) => setCustom((c) => ({ ...c, hours: v }))} min={0} max={24} step={0.5} suffix="h" />
+                        <button onClick={addCustom} className="bg-green-700 hover:bg-green-800 px-4 py-2.5 rounded-lg text-white font-bold text-sm flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
+                          <Plus className="w-4 h-4" /> Add
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* search */}
+                  <div className="relative mb-4">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      value={pickerSearch}
+                      onChange={(e) => setPickerSearch(e.target.value)}
+                      placeholder="Search appliances…"
+                      className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500"
+                    />
+                  </div>
+
+                  {/* appliance buttons grouped */}
+                  <div className="max-h-72 overflow-y-auto space-y-4 pr-1">
+                    {visibleGroups.map((g) => {
+                      const GIcon = GROUP_ICONS[g] || Plug;
+                      const list = filterAppliances(g);
+                      if (list.length === 0) return null;
+                      return (
+                        <div key={g}>
+                          <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+                            <GIcon className="w-3.5 h-3.5" /> {g} <span className="text-slate-300">· {list.length} items</span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {list.map((c) => (
+                              <button key={c.key} onClick={() => addFromCatalog(c)} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:border-green-400 hover:bg-green-50 hover:text-green-700 transition-all cursor-pointer">
+                                <c.icon className="w-3.5 h-3.5 text-green-600" />
+                                {c.name} <span className="text-slate-400 font-medium">{c.watts}W</span>
+                              </button>
+                            ))}
                           </div>
                         </div>
                       );
                     })}
-                    {items.length === 0 && (
-                      <div className="text-center py-8 text-slate-400 text-sm">No appliances added yet — add some from the library below.</div>
+                    {visibleGroups.every((g) => filterAppliances(g).length === 0) && (
+                      <div className="text-xs text-slate-400 py-2">No matches — add it as a custom appliance instead.</div>
                     )}
-                  </div>
-
-                  {/* add-appliance picker */}
-                  <div className="mt-4">
-                    <button
-                      onClick={() => setPickerOpen((o) => !o)}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-orange-300/60 text-orange-500 font-semibold text-sm hover:bg-orange-500/5 transition-colors cursor-pointer"
-                    >
-                      <Plus className="w-4 h-4" /> Add Appliance from Library
-                    </button>
-
-                    {pickerOpen && (
-                      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="mt-3 glass rounded-xl p-4 border border-white/10">
-                        <div className="relative mb-3">
-                          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                          <input
-                            value={pickerSearch}
-                            onChange={(e) => setPickerSearch(e.target.value)}
-                            placeholder="Search appliances…"
-                            className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-300"
-                          />
-                        </div>
-                        <div className="max-h-64 overflow-y-auto space-y-3 pr-1">
-                          {groups.map((g) => (
-                            <div key={g}>
-                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{g}</div>
-                              <div className="flex flex-wrap gap-2">
-                                {filteredCatalog
-                                  .filter((c) => c.group === g)
-                                  .map((c) => {
-                                    const CIcon = c.icon;
-                                    return (
-                                      <button key={c.key} onClick={() => addFromCatalog(c)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass border border-slate-200 text-xs font-medium text-slate-700 hover:border-amber-300/50 hover:text-amber-600 transition-all cursor-pointer">
-                                        <CIcon className="w-3.5 h-3.5 text-orange-400" />
-                                        {c.name} <span className="text-slate-400">{c.watts}W</span>
-                                      </button>
-                                    );
-                                  })}
-                              </div>
-                            </div>
-                          ))}
-                          {groups.length === 0 && <div className="text-xs text-slate-400 py-2">No matches — add it as a custom appliance below.</div>}
-                        </div>
-
-                        {/* custom appliance */}
-                        <div className="mt-4 pt-4 border-t border-slate-200/70">
-                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Custom Appliance</div>
-                          <div className="grid grid-cols-1 sm:grid-cols-[1.4fr,6rem,6rem,auto] gap-2.5 items-end">
-                            <label className="block">
-                              <span className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Name</span>
-                              <input
-                                value={custom.name}
-                                onChange={(e) => setCustom((c) => ({ ...c, name: e.target.value }))}
-                                placeholder="e.g. Aquarium Pump"
-                                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-300"
-                              />
-                            </label>
-                            <NumInput label="Watts" value={custom.watts} onChange={(v) => setCustom((c) => ({ ...c, watts: v }))} suffix="W" />
-                            <NumInput label="Hrs / Day" value={custom.hours} onChange={(v) => setCustom((c) => ({ ...c, hours: v }))} min={0} max={24} step={0.5} suffix="h" />
-                            <button onClick={addCustom} className="btn-primary px-4 py-2.5 rounded-lg text-white font-bold text-sm flex items-center justify-center gap-1.5 cursor-pointer">
-                              <Plus className="w-4 h-4" /> Add
-                            </button>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* ================= Right: settings + live summary ================= */}
-              <div className="lg:col-span-2 space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
-                  <StatChip icon={<Zap className="w-4 h-4 text-orange-500" />} label="Energy Usage" value={`${fmt(summary.dailyKwh, 1)} kWh / day`} />
-                  <StatChip icon={<Gauge className="w-4 h-4 text-blue-500" />} label="Monthly Units (kWh)" value={fmt(summary.unitsPerMonth)} />
-                  <StatChip icon={<SunMedium className="w-4 h-4 text-amber-500" />} label="Peak Load (85% diversity)" value={`${fmt(summary.peakKw, 1)} kW`} />
-                </div>
-
-                <div className="glass rounded-2xl p-5 border border-white/10 space-y-5">
-                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-orange-500" /> System Preferences
-                  </h3>
-
-                  {/* sun hours */}
-                  <div>
-                    <div className="flex items-baseline justify-between mb-1.5">
-                      <span className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Peak Sun Hours / Day</span>
-                      <span className="text-xs font-black text-orange-500">{fmt(clamp(num(sunHours) || 5.5, 3, 8), 1)}</span>
-                    </div>
-                    <input
-                      type="range" min="3" max="8" step="0.5"
-                      value={clamp(num(sunHours) || 5.5, 3, 8)}
-                      onChange={(e) => setSunHours(e.target.value)}
-                      className="w-full accent-orange-500 cursor-pointer"
-                    />
-                    <div className="flex flex-wrap gap-1.5 mt-1.5">
-                      {[
-                        { c: 'Lahore / Karachi', v: 5.7 },
-                        { c: 'Punjab avg', v: 5.5 },
-                        { c: 'Northern / Hilly', v: 4.8 },
-                      ].map((p) => (
-                        <button key={p.c} onClick={() => setSunHours(String(p.v))} className="px-2.5 py-1 rounded-md glass border border-slate-200 text-[10px] font-semibold text-slate-600 hover:text-amber-600 hover:border-amber-300/40 transition-all cursor-pointer">
-                          {p.c} ({p.v})
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* backup hours */}
-                  <div>
-                    <div className="flex items-baseline justify-between mb-1.5">
-                      <span className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Night Backup Needed</span>
-                      <span className="text-xs font-black text-orange-500">{num(backupHours)} hrs</span>
-                    </div>
-                    <input
-                      type="range" min="0" max="12" step="0.5"
-                      value={num(backupHours)}
-                      onChange={(e) => setBackupHours(e.target.value)}
-                      className="w-full accent-orange-500 cursor-pointer"
-                    />
-                    <div className="text-[10px] text-slate-400 mt-1">
-                      {num(backupHours) === 0 ? 'On-grid only — no batteries included' : `Battery runs the average load for ${num(backupHours)} hrs after sunset`}
-                    </div>
-                  </div>
-
-                  {/* tariff + panel watt / battery type */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <NumInput label="Tariff" value={tariff} onChange={setTariff} suffix="Rs/u" />
-                    <div>
-                      <span className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Panel Wattage</span>
-                      <select
-                        value={panelWatt}
-                        onChange={(e) => setPanelWatt(parseInt(e.target.value))}
-                        className="w-full glass border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:border-amber-300 cursor-pointer"
-                      >
-                        {PANEL_WATTS.map((w) => (
-                          <option key={w} value={w}>{w}W</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <span className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Battery Type</span>
-                    <div className="grid grid-cols-2 gap-2">
-                      {[
-                        { id: 'lithium', label: 'Lithium (LiFePO₄)', note: '90% usable · long life' },
-                        { id: 'tubular', label: 'Tubular (Lead-Acid)', note: '50% usable · cheaper' },
-                      ].map((b) => (
-                        <button
-                          key={b.id}
-                          onClick={() => setBatteryType(b.id)}
-                          className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer text-left ${
-                            batteryType === b.id ? 'btn-primary text-white shadow-sm' : 'glass border border-slate-200 text-slate-600 hover:text-amber-600 hover:border-amber-300/40'
-                          }`}
-                        >
-                          <span className="block">{b.label}</span>
-                          <span className="block text-[9px] opacity-70 font-medium">{b.note}</span>
-                        </button>
-                      ))}
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Calculate */}
-            <div className="mt-8 flex flex-col items-center gap-3">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => setShowResult(true)}
-                className="btn-primary px-10 py-4 rounded-2xl text-white font-bold text-base flex items-center gap-2.5 shadow-lg cursor-pointer"
-              >
-                <Calculator className="w-5 h-5" /> Calculate My Solar System
-              </motion.button>
-              <button onClick={reset} className="text-xs text-slate-500 hover:text-orange-500 flex items-center gap-1.5 transition-colors cursor-pointer">
-                <RotateCcw className="w-3.5 h-3.5" /> Reset
-              </button>
+            {/* ================= RIGHT: summary + preferences ================= */}
+            <div className="lg:col-span-5 space-y-6">
+
+              {/* Live Load Summary */}
+              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm">
+                <div className="flex items-center justify-between gap-3 mb-1">
+                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <span className="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center"><Zap className="w-5 h-5 text-green-600" /></span>
+                    Live Load Summary
+                  </h3>
+                  <span className="text-[11px] font-semibold text-slate-400">{summary.count} items</span>
+                </div>
+                <p className="text-xs text-slate-500 mb-4 ml-[3rem]">Updates in real time as you edit your appliances.</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <StatBox icon={Battery} iconBg="bg-green-100" label="Energy Usage" value={fmt(summary.dailyKwh, 1)} unit="kWh/day" />
+                  <StatBox icon={Gauge} iconBg="bg-blue-100" label="Monthly Units" value={fmt(summary.unitsPerMonth)} unit="kWh (units)" />
+                  <StatBox icon={Zap} iconBg="bg-amber-100" label="Peak Load" value={fmt(summary.peakKw, 1)} unit="kW (85% diversity)" />
+                </div>
+              </div>
+
+              {/* System Preferences */}
+              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm">
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 mb-1">
+                  <span className="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center"><Info className="w-5 h-5 text-green-600" /></span>
+                  System Preferences
+                </h3>
+                <p className="text-xs text-slate-500 mb-5 ml-[3rem]">Adjust your location and system settings for accurate results.</p>
+
+                {/* sun hours */}
+                <div className="mb-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
+                      <Sun className="w-4 h-4 text-amber-500" /> Peak Sun Hours <span className="text-slate-400 font-medium text-xs">(per day)</span>
+                    </span>
+                    <span className="text-sm font-black text-green-700">{fmt(clamp(num(sunHours) || 5.5, 3, 8), 1)}</span>
+                  </div>
+                  <input
+                    type="range" min="3" max="8" step="0.5"
+                    value={clamp(num(sunHours) || 5.5, 3, 8)}
+                    onChange={(e) => setSunHours(e.target.value)}
+                    className="w-full accent-green-600 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-400 mt-1"><span>3</span><span>8</span></div>
+                </div>
+
+                {/* backup hours */}
+                <div className="mb-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="flex items-center gap-2 text-sm font-bold text-slate-800">
+                      <Moon className="w-4 h-4 text-indigo-500" /> Night Backup Hours
+                    </span>
+                    <span className="text-sm font-black text-green-700">{num(backupHours)}</span>
+                  </div>
+                  <input
+                    type="range" min="0" max="12" step="0.5"
+                    value={num(backupHours)}
+                    onChange={(e) => setBackupHours(e.target.value)}
+                    className="w-full accent-green-600 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-400 mt-1"><span>0</span><span>12</span></div>
+                  <div className="text-[10px] text-slate-400 mt-1">
+                    {num(backupHours) === 0 ? 'On-grid only — no batteries included' : `Battery runs the average load for ${num(backupHours)} hrs after sunset`}
+                  </div>
+                </div>
+
+                {/* tariff + panel watt */}
+                <div className="grid grid-cols-2 gap-4 mb-5">
+                  <NumInput label="Tariff (Rs/unit)" value={tariff} onChange={setTariff} suffix="Rs/u" />
+                  <div>
+                    <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Panel Wattage</span>
+                    <select
+                      value={panelWatt}
+                      onChange={(e) => setPanelWatt(parseInt(e.target.value))}
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 cursor-pointer"
+                    >
+                      {PANEL_WATTS.map((w) => (
+                        <option key={w} value={w}>{w}W</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* battery type */}
+                <div className="mb-6">
+                  <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Battery Type</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'lithium', label: 'Lithium (LiFePO₄)', note: '90% usable · long life' },
+                      { id: 'tubular', label: 'Tubular (Lead-Acid)', note: '50% usable · cheaper' },
+                    ].map((b) => (
+                      <button
+                        key={b.id}
+                        onClick={() => setBatteryType(b.id)}
+                        className={`px-3 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer text-center ${batteryType === b.id ? 'bg-green-700 text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:text-green-700 hover:bg-green-50'
+                          }`}
+                      >
+                        <span className="block">{b.label}</span>
+                        <span className="block text-[9px] opacity-70 font-medium">{b.note}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* actions */}
+                <div className="grid grid-cols-[1fr_auto] gap-3">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setShowResult(true)}
+                    className="bg-green-700 hover:bg-green-800 px-6 py-3.5 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-colors cursor-pointer"
+                  >
+                    <Calculator className="w-5 h-5" /> Calculate My Solar System <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                  <button onClick={reset} className="flex items-center gap-1.5 px-4 py-3.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:text-green-700 hover:border-green-300 transition-colors cursor-pointer">
+                    <RotateCcw className="w-4 h-4" /> Reset
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -574,143 +700,136 @@ export default function SolarCalculatorPage() {
 
       {/* ---------- Results ---------- */}
       {showResult && res && (
-        <section className="pb-20 relative">
+        <section className="pb-16 relative">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
-              <div className="text-center mb-10">
-                <div className="inline-flex items-center gap-2 mb-3">
-                  <div className="w-8 h-0.5 bg-orange-500" />
-                  <span className="text-orange-500 font-semibold text-xs sm:text-sm uppercase tracking-widest">Your Estimate</span>
-                  <div className="w-8 h-0.5 bg-orange-500" />
+
+              {/* recommendation header */}
+              <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-xl font-black text-slate-900 flex items-center gap-2.5">
+                    <span className="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center"><BatteryCharging className="w-5 h-5 text-green-600" /></span>
+                    Your Solar System Recommendation
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1 ml-[3rem]">Based on your load, settings and location.</p>
                 </div>
-                <h2 className="text-2xl sm:text-4xl font-black text-slate-900">
-                  Recommended <span className="gradient-text">System</span>
-                </h2>
-                <p className="text-slate-500 text-xs sm:text-sm mt-2">
-                  Sized on{' '}
-                  <strong className="text-slate-700">
-                    {tab === 'bills' && res.billAvg > 0 ? `${fmt(res.billAvg)} bill units/month` : `${fmt(res.dailyKwhDesign, 1)} kWh/day (${fmt(summary.unitsPerMonth)} units/month)`}
-                  </strong>{' '}
-                  · {fmt(res.sun, 1)} sun hrs · tariff {fmt(res.T)} Rs/unit
-                </p>
+                <span className="self-start sm:self-auto px-3 py-1.5 rounded-full bg-green-50 border border-green-200 text-[11px] font-bold text-green-700 whitespace-nowrap">
+                  Estimated for {fmt(res.sun, 1)} sun hours · Rs {fmt(res.T)}/unit
+                </span>
               </div>
 
+              {/* result cards 2×3 */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {/* Array */}
                 <ResultCard
-                  icon={<Sun className="w-5 h-5 text-orange-500" />}
-                  title="Solar Panel Array"
+                  icon={Sun} iconWrap="bg-green-100" accentText="text-green-700"
+                  title="Solar Panel Array" tint="bg-white border-slate-200"
                   headline={`~${fmt(res.arrayKw, 1)} kW`}
-                  sub={`Generation rating of the panel array`}
                 >
-                  <div className="flex justify-between"><span>Panels</span><strong className="text-slate-800">{res.panelCount} × {panelWatt}W</strong></div>
-                  <div className="flex justify-between"><span>Roof space needed</span><strong className="text-slate-800">≈ {fmt(res.roofSqft)} sq ft</strong></div>
-                  <div className="flex justify-between"><span>Covers</span><strong className="text-slate-800">{fmt(res.designUnits)} units/month</strong></div>
+                  <Line label="Panels" value={`${res.panelCount} × ${panelWatt}W each`} />
+                  <Line label="Required roof area" value={`≈ ${fmt(res.roofSqft)} sq ft`} />
+                  <Line label="Covers" value={`${fmt(res.designUnits)} units/month`} />
                 </ResultCard>
 
                 {/* Inverter */}
                 <ResultCard
-                  icon={<Zap className="w-5 h-5 text-blue-500" />}
-                  accent="bg-blue-500/10"
-                  accentText="text-blue-500"
-                  title="Inverter (Hybrid)"
+                  icon={Zap} iconWrap="bg-green-100" accentText="text-green-700"
+                  title="Inverter (Hybrid)" tint="bg-green-50/60 border-green-100"
                   headline={`~${fmt(res.inverterKw, 1)} kW`}
-                  sub="Continuous rating, 25% surge headroom"
+                  sub="25% surge headroom"
                 >
-                  <div className="flex justify-between"><span>Your peak demand</span><strong className="text-slate-800">{fmt(summary.peakKw, 1)} kW</strong></div>
-                  <div className="flex justify-between"><span>Battery bank voltage</span><strong className="text-slate-800">{res.battery && res.battery.voltage ? `${res.battery.voltage}V` : '48V'}</strong></div>
-                  <div className="flex justify-between"><span>Type</span><strong className="text-slate-800">Hybrid / Grid-interactive</strong></div>
+                  <Line label="Recommended range" value={res.inverterRange} />
+                  <Line label="Your peak demand" value={`${fmt(summary.peakKw, 1)} kW`} />
+                  <Line label="Type" value="Hybrid / Grid-interactive" />
                 </ResultCard>
 
                 {/* Battery */}
                 <ResultCard
-                  icon={<BatteryCharging className="w-5 h-5 text-emerald-500" />}
-                  accent="bg-emerald-500/10"
-                  accentText="text-emerald-500"
-                  title="Battery Bank"
-                  headline={res.battery ? `~${fmt(res.battery.nameplateKwh, 1)} kWh` : 'No Battery'}
-                  sub={res.battery ? res.battery.label : 'Set backup hours above if you need one'}
+                  icon={BatteryCharging} iconWrap="bg-purple-100" accentText="text-purple-600"
+                  title="Battery Bank" tint="bg-purple-50/50 border-purple-100"
+                  headline={res.battery ? `${fmt(res.battery.nameplateKwh * (batteryType === 'lithium' ? 0.9 : 0.5), 1)} kWh usable` : 'No Battery'}
                 >
-                  {res.battery && (
+                  {res.battery ? (
                     <>
-                      <div className="flex justify-between"><span>Usable energy</span><strong className="text-slate-800">{fmt(res.battery.nameplateKwh * (batteryType === 'lithium' ? 0.9 : 0.5), 1)} kWh</strong></div>
-                      <div className="flex justify-between"><span>Runs average load for</span><strong className="text-slate-800">{res.backup} hrs (night)</strong></div>
-                      <div className="flex justify-between"><span>Night share of daily use</span><strong className="text-slate-800">{fmt(res.nightShare * 100)}%</strong></div>
+                      <Line label="Configuration" value={res.battery.label} />
+                      <Line label="Backup time" value={`≈ ${res.backup} hours`} />
+                      <Line label="Night share of daily use" value={`${fmt(res.nightShare * 100)}%`} />
                     </>
+                  ) : (
+                    <p className="text-xs text-slate-500">Set backup hours above if you need one.</p>
                   )}
                 </ResultCard>
 
                 {/* Cost */}
                 <ResultCard
-                  icon={<CircleDollarSign className="w-5 h-5 text-orange-500" />}
-                  title="Estimated Investment"
-                  headline={rs(res.totalCost)}
-                  sub="Turnkey · indicative market rates"
+                  icon={CircleDollarSign} iconWrap="bg-amber-100" accentText="text-amber-500"
+                  title="Estimated Investment" tint="bg-amber-50/60 border-amber-100"
+                  headline={`${rs(res.totalCost).replace('Rs. ', 'Rs ')}`}
                 >
-                  <div className="flex justify-between"><span>Panels ({fmt(res.arrayKw, 1)} kW)</span><strong className="text-slate-800">{rs(res.panelsCost)}</strong></div>
-                  <div className="flex justify-between"><span>Inverter ({fmt(res.inverterKw, 1)} kW)</span><strong className="text-slate-800">{rs(res.inverterCost)}</strong></div>
-                  <div className="flex justify-between"><span>Batteries {res.battery ? `(${batteryType})` : ''}</span><strong className="text-slate-800">{res.battery ? rs(res.batteryCost) : '—'}</strong></div>
-                  <div className="flex justify-between"><span>Structure, wiring &amp; install</span><strong className="text-slate-800">{rs(res.bosCost)}</strong></div>
+                  <Line label={`Panels (${fmt(res.arrayKw, 1)} kW)`} value={rs(res.panelsCost)} />
+                  <Line label={`Inverter (${fmt(res.inverterKw, 1)} kW)`} value={rs(res.inverterCost)} />
+                  <Line label={`Batteries${res.battery ? ` (${batteryType})` : ''}`} value={res.battery ? rs(res.batteryCost) : '—'} />
+                  <Line label="Structure + Wiring + Install (12%)" value={rs(res.bosCost)} />
                 </ResultCard>
 
                 {/* Savings */}
                 <ResultCard
-                  icon={<TrendingDown className="w-5 h-5 text-emerald-500" />}
-                  accent="bg-emerald-500/10"
-                  accentText="text-emerald-500"
-                  title="Savings & Payback"
+                  icon={TrendingDown} iconWrap="bg-green-100" accentText="text-green-700"
+                  title="Savings & Payback" tint="bg-green-50/60 border-green-100"
                   headline={`~${fmt(res.payback, 1)} yrs`}
-                  sub="Return on your investment"
                 >
-                  <div className="flex justify-between"><span>Monthly bill savings</span><strong className="text-slate-800">{rs(res.monthlySave)}</strong></div>
-                  <div className="flex justify-between"><span>Annual savings</span><strong className="text-slate-800">{rs(res.annualSave)}</strong></div>
-                  <div className="flex justify-between"><span>Bill offset</span><strong className="text-slate-800">~90% (net metering)</strong></div>
-                  <div className="flex justify-between"><span>CO₂ avoided</span><strong className="text-slate-800">{fmt(res.co2, 1)} tons/yr 🌿</strong></div>
+                  <Line label="Monthly Savings" value={rs(res.monthlySave)} />
+                  <Line label="Annual Savings" value={rs(res.annualSave)} />
+                  <Line label="Payback Period" value={`${fmt(res.payback, 1)} years`} />
+                  <Line label="Bill Offset (via net metering)" value="~90%" />
                 </ResultCard>
 
                 {/* Cross-check */}
                 <ResultCard
-                  icon={<CheckCircle2 className="w-5 h-5 text-blue-500" />}
-                  accent="bg-blue-500/10"
-                  accentText="text-blue-500"
-                  title="Accuracy Cross-Check"
-                  headline={res.hasBills ? `${fmt(Math.abs(summary.unitsPerMonth - res.billAvg))} units` : 'Bill Data'}
-                  sub={res.hasBills ? 'Difference between both methods' : 'Add bill units for validation'}
+                  icon={ShieldCheck} iconWrap="bg-blue-100" accentText="text-blue-600"
+                  title="Accuracy Cross-Check" tint="bg-blue-50/50 border-blue-100"
+                  headline={res.hasBills ? `${fmt(res.diffPct ?? Math.abs(summary.unitsPerMonth - res.billAvg))} ${summary.unitsPerMonth > 0 ? '% difference' : 'units'}` : 'Bill Data'}
+                  sub="Appliance vs Bill Method"
                 >
-                  <div className="flex justify-between"><span>Appliance method</span><strong className="text-slate-800">{fmt(summary.unitsPerMonth)} units/mo</strong></div>
-                  <div className="flex justify-between"><span>Bill average method</span><strong className="text-slate-800">{res.hasBills ? `${fmt(res.billAvg)} units/mo` : 'Not entered'}</strong></div>
-                  <p className="text-[11px] text-slate-500 pt-1">
-                    {res.hasBills
-                      ? summary.unitsPerMonth === 0
-                        ? 'Add some appliances to compare both methods.'
-                        : Math.abs(summary.unitsPerMonth - res.billAvg) < res.billAvg * 0.1
-                        ? 'Great — both methods agree within 10%. Your estimate is reliable.'
-                        : summary.unitsPerMonth > res.billAvg
-                        ? 'Your appliance list suggests higher usage than your bills — re-check running hours & quantity.'
-                        : 'Your bills show higher usage than the listed appliances — check for missing loads (ACs, geyser, pump).'
-                      : 'For maximum accuracy, also enter your max & min monthly units from past bills in the Bill / Units Method tab.'}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    {res.hasBills ? (
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${res.diffPct !== null && res.diffPct < 10 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        {res.diffPct !== null ? (res.diffPct < 10 ? `Reliable (within ${fmt(res.diffPct, 1)}%)` : 'Review recommended (above 10%)') : 'Enter appliances to compare'}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 text-[11px] font-bold">Not verified — add bill units</span>
+                    )}
+                  </div>
+                  <Line label="Appliance method" value={`${fmt(summary.unitsPerMonth)} units/mo`} />
+                  <Line label="Bill average method" value={res.hasBills ? `${fmt(res.billAvg)} units/mo` : 'Not entered'} />
                 </ResultCard>
               </div>
 
-              {/* Night-load tip */}
+              {/* Night Load Tip */}
               {res.battery && res.nightShare > 0.4 && (
-                <div className="mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs sm:text-sm text-amber-800 flex items-start gap-2">
-                  <Info className="w-4 h-4 mt-0.5 shrink-0" />
-                  <span>
-                    <strong>Tip:</strong> Night backup covers ~{fmt(res.nightShare * 100)}% of your total daily usage. Consider a slightly larger array — or reducing backup hours — so the panels can still fully recharge the batteries during the day.
-                  </span>
+                <div className="mt-6 p-5 rounded-2xl bg-indigo-50 border border-indigo-100 text-sm text-indigo-900 flex items-start gap-3">
+                  <span className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0"><Moon className="w-4 h-4 text-indigo-500" /></span>
+                  <div>
+                    <div className="font-bold mb-0.5">Night Load Tip</div>
+                    <span className="text-xs sm:text-sm text-indigo-700">
+                      Night backup covers ~{fmt(res.nightShare * 100)}% of your total daily usage. Consider a slightly larger array — or reducing backup hours — so the panels can still fully recharge the batteries during the day.
+                    </span>
+                  </div>
                 </div>
               )}
 
-              {/* CTA banner */}
-              <div className="mt-8 glass-dark rounded-2xl p-6 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-lg">
-                <div className="text-center sm:text-left">
-                  <p className="text-sm sm:text-base font-bold text-slate-900">
-                    🎯 Recommended package: ~{fmt(res.arrayKw, 1)} kW panels · {fmt(res.inverterKw, 1)} kW inverter
-                    {res.battery ? ` · ${fmt(res.battery.nameplateKwh, 1)} kWh battery bank` : ' · on-grid (no battery)'}
-                  </p>
-                  <p className="text-xs text-slate-500 mt-1">Indicative estimate only — final sizing and net-metering quota are confirmed after a free site survey.</p>
+              {/* Quote CTA banner */}
+              <div className="mt-6 bg-gradient-to-r from-green-800 to-green-600 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-lg">
+                <div className="flex items-center gap-4 text-center sm:text-left">
+                  <span className="hidden sm:flex w-11 h-11 rounded-full bg-white/15 items-center justify-center shrink-0">
+                    <Home className="w-5 h-5 text-white" />
+                  </span>
+                  <div>
+                    <p className="text-base font-black text-white">Ready for an Exact Quote?</p>
+                    <p className="text-xs text-green-100 mt-0.5">Recommended: ~{fmt(res.arrayKw, 1)} kW panels · {fmt(res.inverterKw, 1)} kW inverter{res.battery ? ` · ${fmt(res.battery.nameplateKwh, 1)} kWh battery bank` : ' · on-grid (no battery)'}</p>
+                  </div>
                 </div>
                 <div className="flex flex-wrap gap-3 justify-center">
                   <motion.a
@@ -719,28 +838,31 @@ export default function SolarCalculatorPage() {
                     href="https://wa.me/923015935773?text=Hi!%20I%20calculated%20my%20load%20on%20your%20Solar%20Calculator%20and%20want%20a%20quote."
                     target="_blank"
                     rel="noreferrer"
-                    className="px-6 py-3 rounded-xl font-bold text-sm text-white shadow-md flex items-center gap-2"
-                    style={{ background: 'linear-gradient(135deg, #80C91B, #68A415)' }}
+                    className="px-6 py-3 rounded-xl bg-white text-green-700 font-bold text-sm flex items-center gap-2 shadow-md cursor-pointer"
                   >
-                    <FaWhatsapp className="w-4 h-4" /> Get Exact Quote on WhatsApp
+                    <FaWhatsapp className="w-4 h-4" /> Get Exact Quote on WhatsApp <ArrowRight className="w-4 h-4" />
                   </motion.a>
-                  <a href="../#hero" className="glass border border-slate-200 px-6 py-3 rounded-xl font-bold text-sm text-slate-700 flex items-center gap-2 hover:text-orange-500 transition-colors">
+                  <a href="../#hero" className="px-6 py-3 rounded-xl bg-white/10 border border-white/30 text-white font-bold text-sm flex items-center gap-2 hover:bg-white/20 transition-colors">
                     <ArrowLeft className="w-4 h-4" /> Back to Home
                   </a>
                 </div>
               </div>
 
               {/* Assumptions */}
-              <details className="mt-6 glass rounded-xl border border-white/10">
-                <summary className="cursor-pointer list-none px-5 py-4 flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-orange-500 transition-colors">
-                  <Info className="w-4 h-4 text-orange-400" /> Calculation methodology &amp; assumptions
+              <details className="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm group">
+                <summary className="cursor-pointer list-none px-5 py-4 flex items-center gap-3 text-sm font-bold text-slate-800 hover:text-green-700 transition-colors">
+                  <Info className="w-5 h-5 text-green-600" />
+                  <span>Methodology &amp; Assumptions
+                    <span className="block text-[11px] font-medium text-slate-500">View the calculation method, assumptions and important notes.</span>
+                  </span>
+                  <ChevronDown className="w-4 h-4 ml-auto text-slate-400 group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="px-5 pb-5 text-xs text-slate-600 space-y-2 leading-relaxed">
+                <div className="px-5 pb-5 text-xs text-slate-600 space-y-2 leading-relaxed border-t border-slate-100 pt-4">
                   <p><strong className="text-slate-800">Energy (kWh &amp; units):</strong> each appliance contributes Watts × Qty × Hours/day. 1 unit of electricity = 1 kWh.</p>
                   <p><strong className="text-slate-800">Solar array:</strong> daily kWh ÷ (peak sun hours × 0.78 performance ratio — covers inverter, wiring, dust &amp; temperature losses).</p>
                   <p><strong className="text-slate-800">Peak load:</strong> sum of all connected watts × 0.85 diversity (not everything runs at full power simultaneously); the inverter is then upsized by 25% for motor surge and safety.</p>
                   <p><strong className="text-slate-800">Battery:</strong> average load × backup hours ÷ 0.9 inverter efficiency, ÷ chemistry depth-of-discharge (Lithium 90%, tubular 50%).</p>
-                  <p><strong className="text-slate-800">Bill cross-check:</strong> bill average = (max + min) units ÷ 2. If both methods agree within 10%, the estimate is highly reliable; the difference highlights missing appliances or seasonal loads.</p>
+                  <p><strong className="text-slate-800">Bill cross-check:</strong> bill average = (max + min) units ÷ 2. If both methods agree within 10%, the estimate is highly reliable.</p>
                   <p><strong className="text-slate-800">Cost &amp; savings:</strong> indicative PKR street rates (Rs. {COST.panelW}/W panels, Rs. {fmt(COST.invKw)}/kW hybrid inverter, Rs. {fmt(COST.lithKwh)}/kWh lithium &amp; Rs. {fmt(COST.tubKwh)}/kWh tubular storage, plus 12% structure/wiring/install) — savings assume ~90% offset through net metering at your entered tariff.</p>
                   <p className="text-slate-400">Rates change frequently — request a formal quote for locked-in pricing.</p>
                 </div>
@@ -750,27 +872,7 @@ export default function SolarCalculatorPage() {
         </section>
       )}
 
-      {/* ---------- How it works strip ---------- */}
-      <section className="pb-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid sm:grid-cols-3 gap-5">
-          {[
-            { icon: Calculator, t: '1 · List or Enter', d: 'Add your appliances with hours of use — or simply enter the max & min units from your recent bills.' },
-            { icon: Zap, t: '2 · We Calculate', d: 'Daily kWh, monthly units and peak demand are computed with real-world losses and diversity factors.' },
-            { icon: SunMedium, t: '3 · Get a Sized System', d: 'Panels, hybrid inverter, battery bank, roof area, cost estimate, payback and CO₂ savings — instantly.' },
-          ].map((s) => {
-            const SIcon = s.icon;
-            return (
-              <div key={s.t} className="glass rounded-2xl p-6 border border-white/10">
-                <div className="w-11 h-11 rounded-xl bg-orange-500/10 flex items-center justify-center mb-3">
-                  <SIcon className="w-5 h-5 text-orange-500" />
-                </div>
-                <h3 className="text-sm font-bold text-slate-900 mb-1.5">{s.t}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">{s.d}</p>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+
     </div>
   );
 }

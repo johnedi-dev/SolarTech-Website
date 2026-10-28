@@ -1,224 +1,161 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const testimonials = [
   {
     name: 'Ahmed Raza',
-    location: 'Lahore, Pakistan',
+    location: 'Lahore',
     role: 'Homeowner',
     rating: 5,
-    text: 'SolarTech installed a 10kW Solax hybrid system with Dyness batteries. Our electricity bill dropped from Rs. 45,000 to just Rs. 4,000 per month. The team was professional and the installation was completed in just 2 days. Highly recommended!',
-    system: '10kW Solax + Dyness 10kWh',
-    saving: 'Rs. 41,000/month saved',
+    short: '"Excellent service and professional team. Our electricity bill is now almost zero!"',
+    quote: 'SolarTech installed a 10kW Solax hybrid system with Dyness batteries. Our electricity bill dropped from Rs. 45,000 to just Rs. 4,000 per month.',
     avatar: 'AR',
-    avatarBg: 'bg-orange-500',
+    avatarBg: 'bg-green-700',
   },
   {
     name: 'Fatima Malik',
-    location: 'Lahore, Pakistan',
+    location: 'Multan',
     role: 'Business Owner',
     rating: 5,
-    text: 'We got a 20kW Canadian Solar + Solis inverter system for our office. The energy audit was thorough and the projections were accurate. We achieved full ROI in under 3 years. SolarTech support is exceptional!',
-    system: '20kW Canadian Solar + Solis',
-    saving: '80% reduction in bills',
+    short: '"The installation was smooth and clean. Highly recommended!"',
+    quote: 'We got a 20kW Canadian Solar + Solis inverter system for our office. The energy audit was thorough and the projections were accurate. We achieved full ROI in under 3 years.',
     avatar: 'FM',
-    avatarBg: 'bg-blue-500',
+    avatarBg: 'bg-emerald-600',
   },
   {
     name: 'Usman Tariq',
-    location: 'Faisalabad, Pakistan',
+    location: 'Faisalabad',
     role: 'Factory Owner',
     rating: 5,
-    text: 'Installed a 50kW industrial solar system. GoodWe inverters and Jinko panels were of premium quality. The net metering setup was handled completely by SolarTech — zero hassle. Very happy with the investment.',
-    system: '50kW GoodWe + Jinko',
-    saving: 'Rs. 3.5 lakh/month saved',
+    short: '"Great support even after installation. Very satisfied with the system."',
+    quote: 'Installed a 50kW industrial solar system. GoodWe inverters and Jinko panels were of premium quality. The net metering setup was handled completely by SolarTech — zero hassle.',
     avatar: 'UT',
-    avatarBg: 'bg-green-500',
+    avatarBg: 'bg-green-600',
   },
   {
-    name: 'Usman Khalid',
-    location: 'Lahore, Pakistan',
+    name: 'Ayesha Malik',
+    location: 'Faisalabad',
     role: 'Residential Customer',
     rating: 5,
-    text: 'From the initial consultation to the final installation, the entire experience was flawless. The Longi panels and Solax inverter are working perfectly. The monitoring app is very user-friendly!',
-    system: '6kW Solax + Longi 450W',
-    saving: 'Rs. 18,000/month saved',
-    avatar: 'SK',
-    avatarBg: 'bg-purple-500',
+    short: '"Best investment we made for our home. The team is very professional."',
+    quote: 'From the initial consultation to the final installation, the entire experience was flawless. The Longi panels and Solax inverter are working perfectly. The monitoring app is very user-friendly!',
+    avatar: 'AM',
+    avatarBg: 'bg-teal-600',
   },
   {
     name: 'Dr. Imran Hassan',
-    location: 'Lahore, Pakistan',
+    location: 'Lahore',
     role: 'Hospital Administrator',
     rating: 5,
-    text: 'We have solar systems installed at 3 of our hospital buildings. SolarTech managed all three projects simultaneously with exceptional coordination. The Dyness battery backup ensures no interruption during load shedding.',
-    system: '3 × 15kW + Dyness 16kWh',
-    saving: 'Rs. 1.2 lakh/month saved',
+    short: '"Flawless coordination across three buildings. Zero downtime since day one."',
+    quote: 'We have solar systems installed at 3 of our hospital buildings. SolarTech managed all three projects simultaneously with exceptional coordination.',
     avatar: 'IH',
     avatarBg: 'bg-amber-500',
   },
 ];
 
 export default function Testimonials() {
-  const [current, setCurrent] = useState(0);
+  const [page, setPage] = useState(0); // 4 cards per view
+  const perView = 4;
+  const pages = Math.ceil(testimonials.length / perView);
+  const visible = testimonials.slice(page * perView, page * perView + perView);
 
-  const prev = () => setCurrent((c) => (c === 0 ? testimonials.length - 1 : c - 1));
-  const next = () => setCurrent((c) => (c === testimonials.length - 1 ? 0 : c + 1));
-
-  const t = testimonials[current];
+  const prev = () => setPage((p) => (p === 0 ? pages - 1 : p - 1));
+  const next = () => setPage((p) => (p === pages - 1 ? 0 : p + 1));
 
   return (
-    <section id="testimonials" className="relative section-shell section-gradient particles-bg overflow-hidden">
-      {/* Decorative quote marks */}
-      <div className="absolute top-10 left-10 text-orange-500/5 text-[200px] font-black leading-none select-none">"</div>
-
+    <section id="testimonials" className="relative section-shell bg-slate-50 overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-0.5 bg-orange-500"></div>
-            <span className="text-orange-400 font-semibold text-sm uppercase tracking-widest">Testimonials</span>
-            <div className="w-8 h-0.5 bg-orange-500"></div>
+        {/* Header */}
+        <div className="mb-10">
+          <div className="inline-block bg-green-100 text-green-800 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider mb-4">
+            Testimonials
           </div>
-          <h2 className="text-4xl lg:text-5xl font-black mb-4">
-            What Our{' '}
-            <span className="gradient-text">Customers Say</span>
+          <h2 className="text-3xl lg:text-4xl font-black text-slate-900">
+            What Our Customers Say
           </h2>
-          <p className="text-slate-600 text-lg max-w-xl mx-auto">
-            Hear from real customers who transformed their energy bills with SolarTech.
-          </p>
-        </motion.div>
+        </div>
 
-        {/* Main Testimonial */}
-        <div className="grid lg:grid-cols-5 gap-8 items-center mb-12">
-          {/* Prev button */}
-          <div className="hidden lg:flex justify-end">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={prev}
-              className="w-14 h-14 rounded-full glass border border-white/10 hover:border-orange-500/50 flex items-center justify-center text-gray-400 hover:text-orange-400 transition-all"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </motion.button>
-          </div>
+        {/* Cards + arrows */}
+        <div className="flex items-center gap-4">
+          {/* Prev */}
+          <button
+            onClick={prev}
+            className="hidden md:flex w-10 h-10 rounded-full bg-white border border-slate-200 items-center justify-center text-slate-400 hover:text-green-700 hover:border-green-300 transition-all shrink-0 cursor-pointer"
+            aria-label="Previous testimonials"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
 
-          {/* Testimonial Card */}
-          <div className="lg:col-span-3">
+          {/* Cards */}
+          <div className="flex-1 overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
-                key={current}
+                key={page}
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -30 }}
-                transition={{ duration: 0.4 }}
-                className="glass-dark rounded-[2rem] p-8 lg:p-10 border border-slate-200 animated-border shadow-[0_25px_60px_rgba(15,23,42,0.12)]"
+                transition={{ duration: 0.35 }}
+                className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
               >
-                <Quote className="w-10 h-10 text-orange-500/30 mb-6" />
-
-                {/* Stars */}
-                <div className="flex gap-1 mb-6">
-                  {[...Array(t.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-
-                <p className="text-slate-600 text-lg leading-relaxed mb-8 italic">
-                  "{t.text}"
-                </p>
-
-                {/* System Info */}
-                <div className="flex flex-wrap gap-3 mb-6">
-                  <span className="px-4 py-2 glass rounded-full text-sm text-orange-400 border border-orange-500/20 font-medium">
-                    {t.system}
-                  </span>
-                  <span className="px-4 py-2 glass rounded-full text-sm text-green-400 border border-green-500/20 font-medium">
-                    ✓ {t.saving}
-                  </span>
-                </div>
-
-                {/* Author */}
-                <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-full ${t.avatarBg} flex items-center justify-center text-white font-bold text-lg`}>
-                    {t.avatar}
+                {visible.map((t, i) => (
+                  <div
+                    key={i}
+                    className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-[0_20px_45px_rgba(21,128,61,0.10)] transition-all duration-300 flex flex-col"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-11 h-11 rounded-full ${t.avatarBg} flex items-center justify-center text-white font-bold text-sm shrink-0`}>
+                        {t.avatar}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-slate-900 text-sm truncate">{t.name}</div>
+                        <div className="text-slate-400 text-[11px]">{t.location}</div>
+                      </div>
+                    </div>
+                    <div className="flex gap-0.5 mb-3">
+                      {[...Array(t.rating)].map((_, j) => (
+                        <Star key={j} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                      ))}
+                    </div>
+                    <p className="text-slate-600 text-xs leading-relaxed line-clamp-3">{t.short}</p>
+                    <span className="text-[10px] text-slate-400 mt-auto pt-3">{t.role}</span>
                   </div>
-                  <div>
-                    <div className="font-bold text-slate-900 text-lg">{t.name}</div>
-                    <div className="text-slate-600 text-sm">{t.role} · {t.location}</div>
-                  </div>
-                </div>
+                ))}
               </motion.div>
             </AnimatePresence>
           </div>
 
-          {/* Next button */}
-          <div className="hidden lg:flex justify-start">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={next}
-              className="w-14 h-14 rounded-full glass border border-white/10 hover:border-orange-500/50 flex items-center justify-center text-gray-400 hover:text-orange-400 transition-all"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </motion.button>
-          </div>
-        </div>
-
-        {/* Mobile nav buttons */}
-        <div className="flex lg:hidden justify-center gap-4 mb-8">
-          <button onClick={prev} className="w-12 h-12 rounded-full glass border border-white/10 flex items-center justify-center text-gray-400">
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button onClick={next} className="w-12 h-12 rounded-full glass border border-white/10 flex items-center justify-center text-gray-400">
+          {/* Next */}
+          <button
+            onClick={next}
+            className="hidden md:flex w-10 h-10 rounded-full bg-white border border-slate-200 items-center justify-center text-slate-400 hover:text-green-700 hover:border-green-300 transition-all shrink-0 cursor-pointer"
+            aria-label="Next testimonials"
+          >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Dots */}
-        <div className="flex justify-center gap-2">
-          {testimonials.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              className={`transition-all duration-300 rounded-full ${
-                i === current ? 'w-8 h-2 bg-orange-500' : 'w-2 h-2 bg-white/20 hover:bg-white/40'
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Mini testimonial cards */}
-        <div className="grid sm:grid-cols-3 gap-4 mt-12">
-          {testimonials.slice(0, 3).map((t, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ delay: i * 0.1 }}
-              onClick={() => setCurrent(i)}
-              className={`glass rounded-xl p-5 border cursor-pointer transition-all duration-300 ${
-                current === i ? 'border-orange-500/50 bg-orange-500/5' : 'border-white/5 hover:border-white/20'
-              }`}
-            >
-              <div className="flex gap-1 mb-2">
-                {[...Array(5)].map((_, j) => <Star key={j} className="w-3 h-3 text-amber-400 fill-amber-400" />)}
-              </div>
-              <p className="text-slate-600 text-xs line-clamp-2 mb-3">{t.text}</p>
-              <div className="flex items-center gap-2">
-                <div className={`w-7 h-7 rounded-full ${t.avatarBg} flex items-center justify-center text-white text-xs font-bold`}>
-                  {t.avatar}
-                </div>
-                <span className="text-slate-900 text-xs font-medium">{t.name}</span>
-              </div>
-            </motion.div>
-          ))}
+        {/* Dots + mobile arrows */}
+        <div className="flex items-center justify-center gap-4 mt-8">
+          <button onClick={prev} className="md:hidden w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400" aria-label="Previous">
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <div className="flex justify-center gap-2">
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(Math.floor(i / perView) < pages ? Math.floor(i / perView) : 0)}
+                className={`transition-all duration-300 rounded-full cursor-pointer ${
+                  Math.floor(i / perView) === page ? 'w-7 h-2 bg-green-600' : 'w-2 h-2 bg-slate-200 hover:bg-green-300'
+                }`}
+                aria-label={`Go to testimonial ${i + 1}`}
+              />
+            ))}
+          </div>
+          <button onClick={next} className="md:hidden w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400" aria-label="Next">
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </section>
