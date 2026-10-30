@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Calculator } from 'lucide-react';
+import { Menu, X, Calculator, ChevronDown } from 'lucide-react';
 
 // Relative, trailing-slash URL: resolves correctly at a domain root
 // (/, /solar-calculator/) AND under a subpath deploy (e.g. GitHub Pages).
@@ -14,6 +14,13 @@ const navItems = [
   { label: 'Why Us', to: 'why-us' },
   { label: 'Testimonials', to: 'testimonials' },
   { label: 'Contact', to: 'contact' },
+];
+
+// Real indexable pages (own URLs with their own SEO heads)
+const pageItems = [
+  { label: 'Solar Load Calculator', href: CALC_URL, desc: 'Size your system free' },
+  { label: 'Solar in Lahore', href: 'solar-lahore/', desc: 'Prices & LESCO net metering' },
+  { label: 'Solar in Faisalabad', href: 'solar-faisalabad/', desc: 'Prices & FESCO net metering' },
 ];
 
 /**
@@ -49,6 +56,11 @@ export default function Navbar({ offHome = false }) {
 
   // On the calculator page, section anchors must climb back to the home directory
   const hrefFor = (item) => (offHome ? `../#${item.to}` : `#${item.to}`);
+  const pageHrefFor = (href) => (offHome ? `../${href}` : href);
+
+  // Highlight "Pages" when the current document IS one of the real pages
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+  const onRealPage = pageItems.some((p) => currentPath.endsWith(p.href));
 
   return (
     <>
@@ -99,6 +111,40 @@ export default function Navbar({ offHome = false }) {
                   {item.label}
                 </a>
               ))}
+
+              {/* Pages dropdown (hover to open) */}
+              <div className="relative group">
+                <button
+                  className={`relative flex items-center gap-1 text-sm font-medium cursor-pointer py-1 transition-colors duration-200 ${
+                    onRealPage
+                      ? 'text-green-700 font-semibold after:absolute after:-bottom-0.5 after:left-0 after:right-0 after:h-0.5 after:bg-green-600 after:rounded-full'
+                      : 'text-slate-600 hover:text-green-700'
+                  }`}
+                  aria-haspopup="true"
+                >
+                  Pages
+                  <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" />
+                </button>
+
+                <div
+                  className="absolute left-1/2 -translate-x-1/2 top-full pt-3 opacity-0 invisible translate-y-1.5 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 focus-within:opacity-100 focus-within:visible focus-within:translate-y-0 transition-all duration-200 z-50"
+                >
+                  <div className="w-64 bg-white rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/60 p-2">
+                    {pageItems.map((p) => (
+                      <a
+                        key={p.href}
+                        href={pageHrefFor(p.href)}
+                        className={`flex items-start gap-2.5 px-3 py-2.5 rounded-xl text-sm cursor-pointer transition-colors ${onRealPage && currentPath.endsWith(p.href) ? 'text-green-700 font-semibold bg-green-50' : 'text-slate-700 font-medium hover:text-green-700 hover:bg-green-50'}`}
+                      >
+                        <span className="min-w-0">
+                          {p.label}
+                          <span className="block text-[10px] font-semibold text-slate-400">{p.desc}</span>
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* CTA Button */}
@@ -148,6 +194,20 @@ export default function Navbar({ offHome = false }) {
                   }`}
                 >
                   {item.label}
+                </a>
+              ))}
+              {/* Real pages */}
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 pt-3 pb-1">Pages</p>
+              {pageItems.map((p) => (
+                <a
+                  key={p.href}
+                  href={pageHrefFor(p.href)}
+                  onClick={handleNavClick}
+                  className={`font-medium py-2.5 px-3 rounded-lg border-b border-slate-50 cursor-pointer transition-colors ${
+                    onRealPage && currentPath.endsWith(p.href) ? 'text-green-700 font-semibold bg-green-50' : 'text-slate-600 hover:text-green-700 hover:bg-green-50/60'
+                  }`}
+                >
+                  {p.label}
                 </a>
               ))}
               <a href={offHome ? '../solar-calculator/' : CALC_URL} onClick={handleNavClick}>

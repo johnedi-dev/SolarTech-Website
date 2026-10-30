@@ -63,7 +63,7 @@ export default function Hero() {
             className="text-slate-600 text-base sm:text-lg mb-8 max-w-lg leading-relaxed"
           >
             Reduce your electricity bills, gain energy independence and build a cleaner tomorrow
-            with our complete solar solutions. Cut bills by <strong className="text-green-700">up to 80%</strong>.
+            with our complete solar solutions. Cut bills by <strong className="text-green-700">up to 80% or go completly Free</strong>.
           </motion.p>
 
           {/* Buttons */}
