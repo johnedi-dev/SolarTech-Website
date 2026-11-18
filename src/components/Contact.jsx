@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, MessageCircle, Info, Send, CheckCircle } from 'lucide-react';
+import { openBothWhatsApp, whatsappUrl } from '../lib/whatsapp';
 
 const contactInfo = [
   {
@@ -15,9 +16,20 @@ const contactInfo = [
   {
     icon: <MessageCircle className="w-4 h-4" />,
     label: 'WhatsApp',
-    value: 'Chat with our team',
+    value: '+92 301 5935 773',
     sub: 'Quick replies, quotes & support',
-    link: 'https://wa.me/923015935773',
+    link: whatsappUrl('923015935773'),
+    onClick: openBothWhatsApp,
+    bg: 'bg-emerald-100',
+    color: 'text-emerald-600',
+  },
+  {
+    icon: <MessageCircle className="w-4 h-4" />,
+    label: 'WhatsApp (Alt)',
+    value: '+92 323 4004 898',
+    sub: 'Quick replies, quotes & support',
+    link: whatsappUrl('923234004898'),
+    onClick: openBothWhatsApp,
     bg: 'bg-emerald-100',
     color: 'text-emerald-600',
   },
@@ -51,6 +63,10 @@ export default function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Open WhatsApp for both the older and newer contact numbers with a pre-filled message
+    openBothWhatsApp();
+
     setTimeout(() => {
       setLoading(false);
       setSubmitted(true);
@@ -98,13 +114,22 @@ export default function Contact() {
                     </div>
                   </>
                 );
-                return info.link ? (
+                const handleInfoClick = (e) => {
+                  if (!info.onClick) return;
+                  e.preventDefault();
+                  info.onClick();
+                };
+
+                return info.link || info.onClick ? (
                   <a
                     key={i}
-                    href={info.link}
-                    target={info.link.startsWith('http') ? '_blank' : undefined}
+                    href={info.link || '#contact'}
+                    target={info.link && info.link.startsWith('http') ? '_blank' : undefined}
                     rel="noreferrer"
-                    className="flex items-center gap-4 p-3 rounded-2xl hover:bg-green-50/60 transition-colors"
+                    onClick={handleInfoClick}
+                    className={`flex items-center gap-4 p-3 rounded-2xl hover:bg-green-50/60 transition-colors ${
+                      info.onClick ? 'cursor-pointer' : ''
+                    }`}
                   >
                     {Inner}
                   </a>

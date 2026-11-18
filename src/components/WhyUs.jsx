@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Trophy, BadgeCheck, Clock, Headphones, ThumbsUp, Award } from 'lucide-react';
+import { openBothWhatsApp } from '../lib/whatsapp';
 
 const reasons = [
   { icon: Award, title: 'Product Warranty', desc: '10 years of comprehensive coverage on every installation.' },
@@ -69,14 +70,13 @@ export default function WhyUs() {
               >
                 Call Us Now
               </a>
-              <a
-                href="https://wa.me/923015935773"
-                target="_blank"
-                rel="noreferrer"
-                className="px-7 py-3 rounded-xl border border-white/40 text-white bg-white/10 font-bold text-sm hover:bg-white/20 transition-all"
+              <button
+                type="button"
+                onClick={() => openBothWhatsApp()}
+                className="px-7 py-3 rounded-xl border border-white/40 text-white bg-white/10 font-bold text-sm hover:bg-white/20 transition-all cursor-pointer"
               >
                 WhatsApp Chat
-              </a>
+              </button>
             </div>
           </div>
         </motion.div>

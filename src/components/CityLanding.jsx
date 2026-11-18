@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { openBothWhatsApp } from '../lib/whatsapp';
 
 /* ------------------------------------------------------------------ */
 /* Per-city SEO content. The FAQ strings here are mirrored EXACTLY in   */
@@ -132,8 +133,8 @@ export default function CityLanding({ city = 'lahore' }) {
   const c = CITIES[city];
   if (!c) return null;
 
-  const waText = encodeURIComponent(`Hi! I want solar installation in ${c.name}. Please share a quote.`);
-  const waHref = `https://wa.me/923015935773?text=${waText}`;
+  const waText = `Hi! I want solar installation in ${c.name}. Please share a quote.`;
+  const handleWaClick = () => openBothWhatsApp(waText);
 
   return (
     <div className="bg-slate-50">
@@ -161,12 +162,14 @@ export default function CityLanding({ city = 'lahore' }) {
             </div>
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
-            <motion.a
-              whileTap={{ scale: 0.97 }} href={waHref} target="_blank" rel="noreferrer"
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              type="button"
+              onClick={handleWaClick}
               className="px-5 py-3 rounded-xl bg-green-700 hover:bg-green-800 text-white text-sm font-bold flex items-center gap-2 shadow-md cursor-pointer"
             >
               <FaWhatsapp className="w-4 h-4" /> Get a {c.name} Quote <ArrowRight className="w-4 h-4" />
-            </motion.a>
+            </motion.button>
             <a href="../solar-calculator/" className="px-5 py-3 rounded-xl border border-green-600 text-green-700 text-sm font-bold flex items-center gap-2 hover:bg-green-50 cursor-pointer">
               <Calculator className="w-4 h-4" /> Free Solar Calculator
             </a>
@@ -327,12 +330,14 @@ export default function CityLanding({ city = 'lahore' }) {
               </div>
             </div>
             <div className="flex flex-wrap gap-3 justify-center">
-              <motion.a
-                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} href={waHref} target="_blank" rel="noreferrer"
+              <motion.button
+                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                type="button"
+                onClick={handleWaClick}
                 className="px-6 py-3 rounded-xl bg-white text-green-700 font-bold text-sm flex items-center gap-2 shadow-md cursor-pointer"
               >
                 <FaWhatsapp className="w-4 h-4" /> WhatsApp {c.disco} Bill <ArrowRight className="w-4 h-4" />
-              </motion.a>
+              </motion.button>
               <a href="../solar-calculator/" className="px-6 py-3 rounded-xl bg-white/10 border border-white/30 text-white font-bold text-sm flex items-center gap-2 hover:bg-white/20 transition-colors">
                 <Calculator className="w-4 h-4" /> Free Calculator
               </a>
