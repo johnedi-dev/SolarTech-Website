@@ -10,6 +10,7 @@ import {
   CalendarRange, Gauge, Moon, Search, ChevronDown, ShieldCheck, Battery,
   ClipboardList, Home,
 } from 'lucide-react';
+import { openBothWhatsApp } from '../lib/whatsapp';
 
 /* ------------------------------------------------------------------ */
 /* Catalog of common home appliances (wattages = typical market values) */
@@ -915,16 +916,15 @@ export default function SolarCalculatorPage() {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-3 justify-center">
-                  <motion.a
+                  <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    href="https://wa.me/923015935773?text=Hi!%20I%20calculated%20my%20load%20on%20your%20Solar%20Calculator%20and%20want%20a%20quote."
-                    target="_blank"
-                    rel="noreferrer"
+                    type="button"
+                    onClick={() => openBothWhatsApp('Hi! I calculated my load on your Solar Calculator and want a quote.')}
                     className="px-6 py-3 rounded-xl bg-white text-green-700 font-bold text-sm flex items-center gap-2 shadow-md cursor-pointer"
                   >
                     <FaWhatsapp className="w-4 h-4" /> Get Exact Quote on WhatsApp <ArrowRight className="w-4 h-4" />
-                  </motion.a>
+                  </motion.button>
                   <a href="../#hero" className="px-6 py-3 rounded-xl bg-white/10 border border-white/30 text-white font-bold text-sm flex items-center gap-2 hover:bg-white/20 transition-colors">
                     <ArrowLeft className="w-4 h-4" /> Back to Home
                   </a>
