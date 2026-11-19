@@ -1,35 +1,28 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Mail, MessageCircle, Info, Send, CheckCircle } from 'lucide-react';
-import { openBothWhatsApp, whatsappUrl } from '../lib/whatsapp';
+
+const OFFICE_ADDRESS = 'Shahid Electric Store, D-Block Market, Model Town, Lahore';
+const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(OFFICE_ADDRESS)}`;
+const WHATSAPP_NUMBER = '923234004898';
+const WHATSAPP_MESSAGE = 'Hi, I am here from the SolarTech webpage.';
 
 const contactInfo = [
   {
     icon: <Phone className="w-4 h-4" />,
     label: 'Call Us',
-    value: '+92 301 5935 773',
+    value: '+92 323 4004 898',
     sub: 'Call or WhatsApp',
-    link: 'tel:+923015935773',
+    link: `tel:+${WHATSAPP_NUMBER}`,
     bg: 'bg-green-100',
     color: 'text-green-700',
   },
   {
     icon: <MessageCircle className="w-4 h-4" />,
     label: 'WhatsApp',
-    value: '+92 301 5935 773',
+    value: 'Chat with our team',
     sub: 'Quick replies, quotes & support',
-    link: whatsappUrl('923015935773'),
-    onClick: openBothWhatsApp,
-    bg: 'bg-emerald-100',
-    color: 'text-emerald-600',
-  },
-  {
-    icon: <MessageCircle className="w-4 h-4" />,
-    label: 'WhatsApp (Alt)',
-    value: '+92 323 4004 898',
-    sub: 'Quick replies, quotes & support',
-    link: whatsappUrl('923234004898'),
-    onClick: openBothWhatsApp,
+    link: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`,
     bg: 'bg-emerald-100',
     color: 'text-emerald-600',
   },
@@ -45,9 +38,9 @@ const contactInfo = [
   {
     icon: <MapPin className="w-4 h-4" />,
     label: 'Our Office',
-    value: 'Faisalabad, Punjab',
-    sub: 'Visit our office',
-    link: null,
+    value: OFFICE_ADDRESS,
+    sub: 'Get directions on Google Maps',
+    link: MAPS_URL,
     bg: 'bg-amber-100',
     color: 'text-amber-600',
   },
@@ -64,8 +57,11 @@ export default function Contact() {
     e.preventDefault();
     setLoading(true);
 
-    // Open WhatsApp for both the older and newer contact numbers with a pre-filled message
-    openBothWhatsApp();
+    // Open WhatsApp with a pre-filled message
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`,
+      '_blank'
+    );
 
     setTimeout(() => {
       setLoading(false);
@@ -114,22 +110,13 @@ export default function Contact() {
                     </div>
                   </>
                 );
-                const handleInfoClick = (e) => {
-                  if (!info.onClick) return;
-                  e.preventDefault();
-                  info.onClick();
-                };
-
-                return info.link || info.onClick ? (
+                return info.link ? (
                   <a
                     key={i}
-                    href={info.link || '#contact'}
-                    target={info.link && info.link.startsWith('http') ? '_blank' : undefined}
+                    href={info.link}
+                    target={info.link.startsWith('http') ? '_blank' : undefined}
                     rel="noreferrer"
-                    onClick={handleInfoClick}
-                    className={`flex items-center gap-4 p-3 rounded-2xl hover:bg-green-50/60 transition-colors ${
-                      info.onClick ? 'cursor-pointer' : ''
-                    }`}
+                    className="flex items-center gap-4 p-3 rounded-2xl hover:bg-green-50/60 transition-colors"
                   >
                     {Inner}
                   </a>
@@ -142,12 +129,17 @@ export default function Contact() {
             </div>
 
             {/* Office map card */}
-            <div className="mt-5 bg-white rounded-3xl border border-slate-100 shadow-sm p-5 flex items-center gap-4">
+            <a
+              href={MAPS_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-5 bg-white rounded-3xl border border-slate-100 shadow-sm p-5 flex items-center gap-4 hover:border-green-300 transition-colors"
+            >
               <div className="flex-1">
                 <p className="text-sm font-bold text-slate-900 flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-green-600" /> Our Office
                 </p>
-                <p className="text-xs text-slate-500 mt-1">Faisalabad, Punjab, Pakistan — serving all major cities nationwide.</p>
+                <p className="text-xs text-slate-500 mt-1">{OFFICE_ADDRESS} — serving all major cities nationwide.</p>
               </div>
               <div className="w-24 h-20 rounded-2xl bg-green-50 border border-green-100 relative overflow-hidden shrink-0">
                 {/* simple stylized "map" */}
@@ -157,7 +149,7 @@ export default function Contact() {
                 }} />
                 <MapPin className="absolute w-6 h-6 text-green-700 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fill-green-200" />
               </div>
-            </div>
+            </a>
           </motion.div>
 
           {/* Right: Form */}
