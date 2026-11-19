@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import { Trophy, BadgeCheck, Clock, Headphones, ThumbsUp, Award } from 'lucide-react';
-import { openBothWhatsApp } from '../lib/whatsapp';
 
 const reasons = [
   { icon: Award, title: 'Product Warranty', desc: '10 years of comprehensive coverage on every installation.' },
@@ -65,18 +64,19 @@ export default function WhyUs() {
             </div>
             <div className="flex flex-wrap gap-3 justify-center">
               <a
-                href="tel:+923015935773"
+                href="tel:+923234004898"
                 className="px-7 py-3 rounded-xl bg-white text-green-800 font-bold text-sm hover:shadow-xl transition-all"
               >
                 Call Us Now
               </a>
-              <button
-                type="button"
-                onClick={() => openBothWhatsApp()}
-                className="px-7 py-3 rounded-xl border border-white/40 text-white bg-white/10 font-bold text-sm hover:bg-white/20 transition-all cursor-pointer"
+              <a
+                href={`https://wa.me/923234004898?text=${encodeURIComponent('Hi, I am here from the SolarTech webpage.')}`}
+                target="_blank"
+                rel="noreferrer"
+                className="px-7 py-3 rounded-xl border border-white/40 text-white bg-white/10 font-bold text-sm hover:bg-white/20 transition-all"
               >
                 WhatsApp Chat
-              </button>
+              </a>
             </div>
           </div>
         </motion.div>

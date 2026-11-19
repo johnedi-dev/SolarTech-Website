@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaYoutube, FaLinkedin } from 'react-icons/fa';
-import { openBothWhatsApp } from '../lib/whatsapp';
 
 const footerLinks = [
   { label: 'Home', to: 'hero' },
@@ -16,7 +15,7 @@ const footerLinks = [
 const socialLinks = [
   { icon: <FaFacebook className="w-4 h-4" />, href: '#', label: 'Facebook' },
   { icon: <FaInstagram className="w-4 h-4" />, href: '#', label: 'Instagram' },
-  { icon: <FaWhatsapp className="w-4 h-4" />, onClick: () => openBothWhatsApp(), label: 'WhatsApp' },
+  { icon: <FaWhatsapp className="w-4 h-4" />, href: `https://wa.me/923234004898?text=${encodeURIComponent('Hi, I am here from the SolarTech webpage.')}`, label: 'WhatsApp' },
   { icon: <FaYoutube className="w-4 h-4" />, href: '#', label: 'YouTube' },
   { icon: <FaLinkedin className="w-4 h-4" />, href: '#', label: 'LinkedIn' },
 ];
@@ -60,30 +59,18 @@ export default function Footer({ offHome = false }) {
           </nav>
 
           {/* Socials */}          <div className="flex gap-2.5">
-            {socialLinks.map((s, i) =>
-              s.onClick ? (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={s.onClick}
-                  aria-label={s.label}
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-green-600 flex items-center justify-center transition-colors"
-                >
-                  {s.icon}
-                </button>
-              ) : (
-                <a
-                  key={i}
-                  href={s.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={s.label}
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-green-600 flex items-center justify-center transition-colors"
-                >
-                  {s.icon}
-                </a>
-              )
-            )}
+            {socialLinks.map((s, i) => (
+              <a
+                key={i}
+                href={s.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={s.label}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-green-600 flex items-center justify-center transition-colors"
+              >
+                {s.icon}
+              </a>
+            ))}
           </div>
         </div>
 
