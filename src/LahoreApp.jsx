@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CityLanding from './components/CityLanding';
@@ -9,6 +10,7 @@ export default function LahoreApp() {
       <Navbar offHome />
       <CityLanding city="lahore" />
       <Footer offHome />
+      <Analytics />
     </div>
   );
 }
