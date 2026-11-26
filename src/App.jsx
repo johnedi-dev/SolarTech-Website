@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import StatsBar from './components/StatsBar';
@@ -61,6 +62,7 @@ function App() {
       <Contact />
       <FloatingCalculator />
       <Footer />
+      <Analytics />
     </div>
   );
 }

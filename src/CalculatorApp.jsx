@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import SolarCalculatorPage from './components/SolarCalculatorPage';
 import Footer from './components/Footer';
@@ -9,6 +10,7 @@ export default function CalculatorApp() {
       <Navbar offHome />
       <SolarCalculatorPage />
       <Footer offHome />
+      <Analytics />
     </div>
   );
 }
