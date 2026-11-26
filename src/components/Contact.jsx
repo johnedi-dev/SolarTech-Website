@@ -167,8 +167,9 @@ export default function Contact() {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Full Name *</label>
+                    <label htmlFor="contact-name" className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Full Name *</label>
                     <input
+                      id="contact-name"
                       type="text"
                       name="name"
                       required
@@ -179,8 +180,9 @@ export default function Contact() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Phone Number *</label>
+                    <label htmlFor="contact-phone" className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Phone Number *</label>
                     <input
+                      id="contact-phone"
                       type="tel"
                       name="phone"
                       required
@@ -191,8 +193,9 @@ export default function Contact() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Your Message</label>
+                    <label htmlFor="contact-message" className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block">Your Message</label>
                     <textarea
+                      id="contact-message"
                       name="message"
                       rows={4}
                       value={form.message}

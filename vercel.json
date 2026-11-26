@@ -20,6 +20,12 @@
     {
       "source": "/terms.html",
       "headers": [{ "key": "X-Content-Type-Options", "value": "nosniff" }]
+    },
+    {
+      "source": "/googleb4801ac02bf6a53e.html",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
     }
   ]
 }

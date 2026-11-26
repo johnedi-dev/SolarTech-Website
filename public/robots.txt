@@ -3,12 +3,26 @@
 
 User-agent: *
 Allow: /
+# Google Search Console verification file — not a content page, should not be indexed
+Disallow: /googleb4801ac02bf6a53e.html
 
-# AI answer engines (explicitly welcome; harmless if some ignore this)
+# AI answer engines — explicitly welcome so the site can be cited in AI answers
 User-agent: GPTBot
 Allow: /
 
 User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
 Allow: /
 
 Sitemap: https://www.solartech.pk/sitemap.xml
