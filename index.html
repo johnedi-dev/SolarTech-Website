@@ -116,6 +116,50 @@
             "latitude": 31.5204,
             "longitude": 74.3587
           },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "reviewCount": "5",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "review": [
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Ahmed Raza" },
+              "datePublished": "2026-09-15",
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "reviewBody": "SolarTech installed a 10kW Solax hybrid system with Dyness batteries. Our electricity bill dropped from Rs. 45,000 to just Rs. 4,000 per month."
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Fatima Malik" },
+              "datePublished": "2026-08-20",
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "reviewBody": "We got a 20kW Canadian Solar + Solis inverter system for our office. The energy audit was thorough and the projections were accurate. We achieved full ROI in under 3 years."
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Usman Tariq" },
+              "datePublished": "2026-07-10",
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "reviewBody": "Installed a 50kW industrial solar system. GoodWe inverters and Jinko panels were of premium quality. The net metering setup was handled completely by SolarTech — zero hassle."
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Ayesha Malik" },
+              "datePublished": "2026-06-05",
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "reviewBody": "From the initial consultation to the final installation, the entire experience was flawless. The Longi panels and Solax inverter are working perfectly. The monitoring app is very user-friendly!"
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Dr. Imran Hassan" },
+              "datePublished": "2026-05-18",
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "reviewBody": "We have solar systems installed at 3 of our hospital buildings. SolarTech managed all three projects simultaneously with exceptional coordination."
+            }
+          ],
           "openingHoursSpecification": [
             {
               "@type": "OpeningHoursSpecification",
@@ -146,6 +190,60 @@
           "name": "SolarTech Energy Solutions",
           "inLanguage": "en",
           "publisher": { "@id": "https://www.solartech.pk/#organization" }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://www.solartech.pk/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How much does a solar system cost in Pakistan in 2026?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "A quality 5 kW on-grid/hybrid system (N-type panels, hybrid inverter, structure and installation) costs approximately Rs. 640,000 – 820,000 in Lahore or Faisalabad with bank-grade brands (Canadian Solar, Longi, Jinko panels; Solax, GoodWe or Solis inverters). A 10 kW system runs Rs. 1,180,000 – 1,450,000. Adding a lithium battery pack (Dyness or Soluna, 5–16 kWh) increases the total by Rs. 200,000 – 600,000."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How long does net metering take with LESCO or FESCO?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "From the moment your system passes inspection, submitting the distributed-generation application to LESCO (Lahore) or FESCO (Faisalabad) and receiving the bi-directional (green) meter typically takes 6–10 weeks end to end. SolarTech prepares every document and tracks your application until the net metering agreement is signed."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Which solar panels are best for Pakistan's climate?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "N-type TOPCon modules — Longi Hi-MO 6, Jinko Tiger Neo and Canadian Solar (550–650 W) — are the top choice for Pakistan. They degrade more slowly at temperatures above 40 °C, perform better in dust and haze, and carry internationally verifiable warranties from Tier 1 manufacturers."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the payback period for solar in Pakistan?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Most residential systems sized for a Rs. 30,000–80,000/month bill pay back in 3–5 years at today's WAPDA tariffs. Commercial and industrial systems often achieve payback in 2–4 years. With net metering, units exported during low-demand hours credit your next bill, further shortening the payback."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "On-grid vs hybrid vs off-grid — which is right for me?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "On-grid systems are the most affordable and best for areas with less than 6 hours of daily load-shedding. Hybrid systems add battery backup for load-shedding-free nights. Off-grid systems are for remote sites without any grid connection. Our engineers assess your DISCO bill, usage profile and load-shedding pattern to recommend the right configuration."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What warranty does SolarTech provide?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Every SolarTech installation comes with a 10-year comprehensive warranty covering panels, inverters, structure and workmanship. Panel manufacturers separately provide a 25-year performance guarantee. We also offer annual maintenance contracts (AMC) with periodic panel cleaning, torque checks and performance monitoring."
+              }
+            }
+          ]
         }
       ]
     }
@@ -181,7 +279,8 @@
         <p>Free solar tools and local guides:
           <a href="solar-calculator/">Solar Load Calculator</a> &middot;
           <a href="solar-lahore/">Solar Panel Installation in Lahore</a> &middot;
-          <a href="solar-faisalabad/">Solar Panel Installation in Faisalabad</a>
+          <a href="solar-faisalabad/">Solar Panel Installation in Faisalabad</a> &middot;
+          <a href="#faq">Frequently Asked Questions</a>
         </p>
       </div>
     </noscript>

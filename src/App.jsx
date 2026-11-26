@@ -11,6 +11,7 @@ import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import FloatingCalculator from './components/FloatingCalculator';
+import FAQ from './components/FAQ';
 
 // Legacy hash route — permanently moved to a real URL for SEO.
 // Old shared links (#/solar-calculator) are redirected so nothing breaks.
@@ -56,6 +57,7 @@ function App() {
       <SavingsCalculator />
       <WhyUs />
       <Testimonials />
+      <FAQ />
       <Contact />
       <FloatingCalculator />
       <Footer />

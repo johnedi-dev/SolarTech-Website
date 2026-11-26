@@ -13,6 +13,11 @@
   RewriteRule ^index\.html$ / [R=301,L]
 </IfModule>
 
+# Tell Google not to index the GSC verification file
+<Files "googleb4801ac02bf6a53e.html">
+  Header set X-Robots-Tag "noindex, nofollow"
+</Files>
+
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json image/svg+xml
 </IfModule>
